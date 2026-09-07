@@ -30,8 +30,6 @@ class BookLocalDataSourceImpl implements BookLocalDataSource {
       },
     ];
 
-    return records
-        .map((record) => BookModel.fromJson(record))
-        .toList();
+    return records.map((record) => BookModel.fromJson(record)).toList();
   }
 }
