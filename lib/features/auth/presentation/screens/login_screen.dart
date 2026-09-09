@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../book/presentation/screens/books_screen.dart';
+import '../../../../core/router/member_navigation_shell.dart';
 import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const BooksScreen();
+          return const MemberNavigationShell();
         },
       ),
     );
