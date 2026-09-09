@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/book/presentation/screens/books_screen.dart';
 
 void main() {
@@ -27,8 +28,9 @@ class LibraryApp extends StatelessWidget {
         // use this color scheme
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
       ),
-      // Make BooksScreen the first screen
-      home: const BooksScreen(),
+      // The first screen
+      home: const LoginScreen(),
+      //home: const BooksScreen(),
     );
   }
 }
