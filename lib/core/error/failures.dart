@@ -13,6 +13,10 @@ class DataFailure extends Failure {
       ); //super calls the parent Failure constructor
 }
 
+class BorrowingFailure extends Failure {
+  const BorrowingFailure(String message) : super(message);
+}
+
 /*
   final failure = DataFailure();
 
