@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../features/member/presentation/screens/member_home_screen.dart';
 import '../../features/book/presentation/screens/books_screen.dart';
 import '../../features/borrowing/presentation/screens/my_borrowings_screen.dart';
 import '../../features/member/presentation/screens/member_profile_screen.dart';
@@ -33,6 +34,7 @@ class _MemberNavigationShellState extends State<MemberNavigationShell> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
+          const MemberHomeScreen(),
           const BooksScreen(),
           MyBorrowingsScreen(
             memberId: widget.memberId,
@@ -44,6 +46,11 @@ class _MemberNavigationShellState extends State<MemberNavigationShell> {
         selectedIndex: selectedIndex,
         onDestinationSelected: selectPage,
         destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
           NavigationDestination(
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),
