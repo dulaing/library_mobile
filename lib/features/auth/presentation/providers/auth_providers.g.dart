@@ -137,3 +137,47 @@ final class LoginProvider extends $FunctionalProvider<Login, Login, Login>
 }
 
 String _$loginHash() => r'dd1058fbf218798b084cca91e4b965806a8055bf';
+
+@ProviderFor(AuthController)
+final authControllerProvider = AuthControllerProvider._();
+
+final class AuthControllerProvider
+    extends $AsyncNotifierProvider<AuthController, AuthSession?> {
+  AuthControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authControllerProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authControllerHash();
+
+  @$internal
+  @override
+  AuthController create() => AuthController();
+}
+
+String _$authControllerHash() => r'93a4340dd8f75a17916b699166a2b91d5dc46ba7';
+
+abstract class _$AuthController extends $AsyncNotifier<AuthSession?> {
+  FutureOr<AuthSession?> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<AuthSession?>, AuthSession?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<AuthSession?>, AuthSession?>,
+              AsyncValue<AuthSession?>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

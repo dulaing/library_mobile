@@ -5,6 +5,7 @@ import '../../data/datasources/auth_remote_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/login.dart';
+import '../../domain/entities/auth_session.dart';
 
 part 'auth_providers.g.dart';
 
@@ -29,4 +30,40 @@ Login login(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
 
   return Login(repository);
+}
+
+// controller that performs login and remembers its current state.
+// keepAlive: true means Riverpod keeps the logged-in session in memory while the app is running.
+@Riverpod(keepAlive: true)
+class AuthController extends _$AuthController {
+  @override
+  Future<AuthSession?> build() async {
+    return null;
+  }
+
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+
+    final loginUser = ref.read(loginProvider);
+
+    final result = await loginUser(
+      email: email,
+      password: password,
+    );
+
+    result.fold(
+          (failure) {
+        state = AsyncError(
+          failure,
+          StackTrace.current,
+        );
+      },
+          (session) {
+        state = AsyncData(session);
+      },
+    );
+  }
 }
