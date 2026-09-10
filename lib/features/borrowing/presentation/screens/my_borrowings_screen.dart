@@ -5,6 +5,9 @@ import '../../../../core/error/failures.dart';
 import '../../domain/entities/borrowing.dart';
 import '../providers/borrowing_providers.dart';
 
+import '../../../book/domain/entities/book.dart';
+import '../../../book/presentation/providers/book_providers.dart';
+
 class MyBorrowingsScreen extends ConsumerWidget {
   const MyBorrowingsScreen({
     this.memberId,
@@ -33,6 +36,8 @@ class MyBorrowingsScreen extends ConsumerWidget {
     final borrowingsResult = ref.watch(
       memberBorrowingsProvider(currentMemberId),
     );
+
+    final booksResult = ref.watch(booksProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -91,26 +96,61 @@ class MyBorrowingsScreen extends ConsumerWidget {
             );
           }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              await ref.refresh(
-                memberBorrowingsProvider(
-                  currentMemberId,
-                ).future,
+          return booksResult.when(
+            loading: () {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
             },
-            child: ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: borrowings.length,
-              itemBuilder: (context, index) {
-                return BorrowingListItem(
-                  borrowing: borrowings[index],
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider(height: 1);
-              },
-            ),
+            error: (error, stackTrace) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Could not load book information.'),
+                    const SizedBox(height: 12),
+                    FilledButton(
+                      onPressed: () {
+                        ref.invalidate(booksProvider);
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            },
+            data: (books) {
+              final booksById = {
+                for (final book in books) book.id: book,
+              };
+
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(booksProvider);
+
+                  await ref.refresh(
+                    memberBorrowingsProvider(
+                      currentMemberId,
+                    ).future,
+                  );
+                },
+                child: ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: borrowings.length,
+                  itemBuilder: (context, index) {
+                    final borrowing = borrowings[index];
+
+                    return BorrowingListItem(
+                      borrowing: borrowing,
+                      book: booksById[borrowing.bookId],
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const Divider(height: 1);
+                  },
+                ),
+              );
+            },
           );
         },
       ),
@@ -121,19 +161,28 @@ class MyBorrowingsScreen extends ConsumerWidget {
 class BorrowingListItem extends StatelessWidget {
   const BorrowingListItem({
     required this.borrowing,
+    required this.book,
     super.key,
   });
 
   final Borrowing borrowing;
+  final Book? book;
 
   @override
   Widget build(BuildContext context) {
+    final currentBook = book;
+
     return ListTile(
       leading: const Icon(Icons.book_outlined),
-      title: Text('Book #${borrowing.bookId}'),
+      title: Text(
+        currentBook?.title ?? 'Book #${borrowing.bookId}',
+      ),
       subtitle: Text(
-        'Borrowed: ${formatDate(borrowing.borrowedDate)}\n'
-            'Due: ${formatDate(borrowing.dueDate)}',
+        [
+          if (currentBook != null) currentBook.author,
+          'Borrowed: ${formatDate(borrowing.borrowedDate)}',
+          'Due: ${formatDate(borrowing.dueDate)}',
+        ].join('\n'),
       ),
       isThreeLine: true,
       trailing: Chip(

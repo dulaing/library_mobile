@@ -9,53 +9,53 @@ part of 'book_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(bookLocalDataSource)
-final bookLocalDataSourceProvider = BookLocalDataSourceProvider._();
+@ProviderFor(bookRemoteDataSource)
+final bookRemoteDataSourceProvider = BookRemoteDataSourceProvider._();
 
-final class BookLocalDataSourceProvider
+final class BookRemoteDataSourceProvider
     extends
         $FunctionalProvider<
-          BookLocalDataSource,
-          BookLocalDataSource,
-          BookLocalDataSource
+          BookRemoteDataSource,
+          BookRemoteDataSource,
+          BookRemoteDataSource
         >
-    with $Provider<BookLocalDataSource> {
-  BookLocalDataSourceProvider._()
+    with $Provider<BookRemoteDataSource> {
+  BookRemoteDataSourceProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'bookLocalDataSourceProvider',
+        name: r'bookRemoteDataSourceProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$bookLocalDataSourceHash();
+  String debugGetCreateSourceHash() => _$bookRemoteDataSourceHash();
 
   @$internal
   @override
-  $ProviderElement<BookLocalDataSource> $createElement(
+  $ProviderElement<BookRemoteDataSource> $createElement(
     $ProviderPointer pointer,
   ) => $ProviderElement(pointer);
 
   @override
-  BookLocalDataSource create(Ref ref) {
-    return bookLocalDataSource(ref);
+  BookRemoteDataSource create(Ref ref) {
+    return bookRemoteDataSource(ref);
   }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(BookLocalDataSource value) {
+  Override overrideWithValue(BookRemoteDataSource value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<BookLocalDataSource>(value),
+      providerOverride: $SyncValueProvider<BookRemoteDataSource>(value),
     );
   }
 }
 
-String _$bookLocalDataSourceHash() =>
-    r'0a6e6a5eafaf7c6783460550d8da9462daf02239';
+String _$bookRemoteDataSourceHash() =>
+    r'e989140d74d19feac50544d9fc1a2a2d68a44c48';
 
 @ProviderFor(bookRepository)
 final bookRepositoryProvider = BookRepositoryProvider._();
@@ -96,7 +96,7 @@ final class BookRepositoryProvider
   }
 }
 
-String _$bookRepositoryHash() => r'dedaaf1369ff76be6ee6891ff29e5684b180453c';
+String _$bookRepositoryHash() => r'e1f7f6aa08227d64c74ac591647f98eb2f92a5c8';
 
 @ProviderFor(getBooks)
 final getBooksProvider = GetBooksProvider._();
