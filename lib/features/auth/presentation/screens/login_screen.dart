@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/error/failures.dart';
+import '../providers/auth_providers.dart';
+
 import '../../../../core/router/member_navigation_shell.dart';
 import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() {
+  ConsumerState<LoginScreen> createState() {
     return _LoginScreenState();
   }
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen>  {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -26,18 +31,36 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void signIn() {
+  Future<void> signIn() async {
     final formIsValid = formKey.currentState!.validate();
 
     if (!formIsValid) {
       return;
     }
 
-    // the auth backend is not wired. goes into the app regardless the credentials
+    final session = await ref
+        .read(authControllerProvider.notifier)
+        .signIn(
+      email: emailController.text.trim(),
+      password: passwordController.text,
+    );
+
+    if (!mounted || session == null) {
+      return;
+    }
+
+    final memberId = session.memberId;
+
+    if (memberId == null) {
+      return;
+    }
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (context) {
-          return const MemberNavigationShell();
+          return MemberNavigationShell(
+            memberId: memberId,
+          );
         },
       ),
     );
@@ -55,6 +78,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final authState = ref.watch(authControllerProvider);
+
+    final authError = authState.error;
+
+    final errorMessage = authError is Failure
+        ? authError.message
+        : null;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -132,9 +164,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
-                    onPressed: signIn,
-                    child: const Text('Sign in'),
+                    onPressed: authState.isLoading ? null : signIn,
+                    child: authState.isLoading
+                        ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    )
+                        : const Text('Sign in'),
                   ),
+                  if (errorMessage != null) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      errorMessage,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
                   TextButton(
                     onPressed: openRegisterScreen,
                     child: const Text('Create an account'),

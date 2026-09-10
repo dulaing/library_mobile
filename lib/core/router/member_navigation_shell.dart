@@ -5,7 +5,12 @@ import '../../features/borrowing/presentation/screens/my_borrowings_screen.dart'
 import '../../features/member/presentation/screens/member_profile_screen.dart';
 
 class MemberNavigationShell extends StatefulWidget {
-  const MemberNavigationShell({super.key});
+  const MemberNavigationShell({
+    required this.memberId,
+    super.key,
+  });
+
+  final int memberId;
 
   @override
   State<MemberNavigationShell> createState() {
@@ -15,12 +20,6 @@ class MemberNavigationShell extends StatefulWidget {
 
 class _MemberNavigationShellState extends State<MemberNavigationShell> {
   int selectedIndex = 0;
-
-  final pages = const <Widget>[
-    BooksScreen(),
-    MyBorrowingsScreen(),
-    MemberProfileScreen(),
-  ];
 
   void selectPage(int index) {
     setState(() {
@@ -33,7 +32,13 @@ class _MemberNavigationShellState extends State<MemberNavigationShell> {
     return Scaffold(
       body: IndexedStack(
         index: selectedIndex,
-        children: pages,
+        children: [
+          const BooksScreen(),
+          MyBorrowingsScreen(
+            memberId: widget.memberId,
+          ),
+          const MemberProfileScreen(),
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
