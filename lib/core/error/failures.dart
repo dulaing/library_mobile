@@ -17,6 +17,10 @@ class BorrowingFailure extends Failure {
   const BorrowingFailure(String message) : super(message);
 }
 
+class AuthFailure extends Failure {
+  const AuthFailure(String message) : super(message);
+}
+
 /*
   final failure = DataFailure();
 
