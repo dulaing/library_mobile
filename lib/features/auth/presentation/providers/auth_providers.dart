@@ -41,7 +41,7 @@ class AuthController extends _$AuthController {
     return null;
   }
 
-  Future<void> signIn({
+  Future<AuthSession?> signIn({
     required String email,
     required String password,
   }) async {
@@ -54,15 +54,24 @@ class AuthController extends _$AuthController {
       password: password,
     );
 
-    result.fold(
+    return result.fold(
           (failure) {
         state = AsyncError(
           failure,
           StackTrace.current,
         );
+
+        return null;
       },
           (session) {
+        final dio = ref.read(apiClientProvider);
+
+        dio.options.headers['Authorization'] =
+        'Bearer ${session.accessToken}';
+
         state = AsyncData(session);
+
+        return session;
       },
     );
   }
