@@ -1,0 +1,229 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'borrowing_providers.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(borrowingRemoteDataSource)
+final borrowingRemoteDataSourceProvider = BorrowingRemoteDataSourceProvider._();
+
+final class BorrowingRemoteDataSourceProvider
+    extends
+        $FunctionalProvider<
+          BorrowingRemoteDataSource,
+          BorrowingRemoteDataSource,
+          BorrowingRemoteDataSource
+        >
+    with $Provider<BorrowingRemoteDataSource> {
+  BorrowingRemoteDataSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'borrowingRemoteDataSourceProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$borrowingRemoteDataSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<BorrowingRemoteDataSource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  BorrowingRemoteDataSource create(Ref ref) {
+    return borrowingRemoteDataSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BorrowingRemoteDataSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BorrowingRemoteDataSource>(value),
+    );
+  }
+}
+
+String _$borrowingRemoteDataSourceHash() =>
+    r'489ab00d1e6fba5e5692177882ffec3a561f688c';
+
+@ProviderFor(borrowingRepository)
+final borrowingRepositoryProvider = BorrowingRepositoryProvider._();
+
+final class BorrowingRepositoryProvider
+    extends
+        $FunctionalProvider<
+          BorrowingRepository,
+          BorrowingRepository,
+          BorrowingRepository
+        >
+    with $Provider<BorrowingRepository> {
+  BorrowingRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'borrowingRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$borrowingRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<BorrowingRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  BorrowingRepository create(Ref ref) {
+    return borrowingRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BorrowingRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BorrowingRepository>(value),
+    );
+  }
+}
+
+String _$borrowingRepositoryHash() =>
+    r'28abab0b4f54de1d962e9531ef39b010fec87885';
+
+@ProviderFor(getMemberBorrowings)
+final getMemberBorrowingsProvider = GetMemberBorrowingsProvider._();
+
+final class GetMemberBorrowingsProvider
+    extends
+        $FunctionalProvider<
+          GetMemberBorrowings,
+          GetMemberBorrowings,
+          GetMemberBorrowings
+        >
+    with $Provider<GetMemberBorrowings> {
+  GetMemberBorrowingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getMemberBorrowingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getMemberBorrowingsHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetMemberBorrowings> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  GetMemberBorrowings create(Ref ref) {
+    return getMemberBorrowings(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetMemberBorrowings value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetMemberBorrowings>(value),
+    );
+  }
+}
+
+String _$getMemberBorrowingsHash() =>
+    r'a53fc75f38b3b0c15106651a0bfc45f081c51086';
+
+@ProviderFor(memberBorrowings)
+final memberBorrowingsProvider = MemberBorrowingsFamily._();
+
+final class MemberBorrowingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Borrowing>>,
+          List<Borrowing>,
+          FutureOr<List<Borrowing>>
+        >
+    with $FutureModifier<List<Borrowing>>, $FutureProvider<List<Borrowing>> {
+  MemberBorrowingsProvider._({
+    required MemberBorrowingsFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: noBorrowingRetry,
+         name: r'memberBorrowingsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$memberBorrowingsHash();
+
+  @override
+  String toString() {
+    return r'memberBorrowingsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Borrowing>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Borrowing>> create(Ref ref) {
+    final argument = this.argument as int;
+    return memberBorrowings(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MemberBorrowingsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$memberBorrowingsHash() => r'51386c1181eb79441a742b66dfffccc974f84e4e';
+
+final class MemberBorrowingsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<List<Borrowing>>, int> {
+  MemberBorrowingsFamily._()
+    : super(
+        retry: noBorrowingRetry,
+        name: r'memberBorrowingsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  MemberBorrowingsProvider call(int memberId) =>
+      MemberBorrowingsProvider._(argument: memberId, from: this);
+
+  @override
+  String toString() => r'memberBorrowingsProvider';
+}
