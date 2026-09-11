@@ -13,22 +13,35 @@ class BorrowingRepositoryImpl implements BorrowingRepository {
 
   @override
   Future<Either<Failure, List<Borrowing>>> getMemberBorrowings(
-      int memberId,
-      ) async {
+    int memberId,
+  ) async {
     try {
-      final borrowings = await dataSource.getMemberBorrowings(
-        memberId,
-      );
+      final borrowings = await dataSource.getMemberBorrowings(memberId);
 
       return Right(borrowings);
     } on ApiException catch (error) {
-      return Left(
-        BorrowingFailure(error.message),
-      );
+      return Left(BorrowingFailure(error.message));
     } catch (_) {
-      return const Left(
-        BorrowingFailure('Could not load your borrowings.'),
+      return const Left(BorrowingFailure('Could not load your borrowings.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Borrowing>> borrowBook({
+    required int memberId,
+    required int bookId,
+  }) async {
+    try {
+      final borrowing = await dataSource.borrowBook(
+        memberId: memberId,
+        bookId: bookId,
       );
+
+      return Right(borrowing);
+    } on ApiException catch (error) {
+      return Left(BorrowingFailure(error.message));
+    } catch (_) {
+      return const Left(BorrowingFailure('Could not borrow this book.'));
     }
   }
 }
