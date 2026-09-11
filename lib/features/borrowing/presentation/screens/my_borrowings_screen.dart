@@ -9,10 +9,7 @@ import '../../../book/domain/entities/book.dart';
 import '../../../book/presentation/providers/book_providers.dart';
 
 class MyBorrowingsScreen extends ConsumerWidget {
-  const MyBorrowingsScreen({
-    this.memberId,
-    super.key,
-  });
+  const MyBorrowingsScreen({this.memberId, super.key});
 
   final int? memberId;
 
@@ -22,14 +19,8 @@ class MyBorrowingsScreen extends ConsumerWidget {
 
     if (currentMemberId == null) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('My Borrowings'),
-        ),
-        body: const Center(
-          child: Text(
-            'Sign in to view your borrowings.',
-          ),
-        ),
+        appBar: AppBar(title: const Text('My Borrowings')),
+        body: const Center(child: Text('Sign in to view your borrowings.')),
       );
     }
 
@@ -40,14 +31,10 @@ class MyBorrowingsScreen extends ConsumerWidget {
     final booksResult = ref.watch(booksProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Borrowings'),
-      ),
+      appBar: AppBar(title: const Text('My Borrowings')),
       body: borrowingsResult.when(
         loading: () {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         },
         error: (error, stackTrace) {
           final message = error is Failure
@@ -62,9 +49,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: () {
-                    ref.invalidate(
-                      memberBorrowingsProvider(currentMemberId),
-                    );
+                    ref.invalidate(memberBorrowingsProvider(currentMemberId));
                   },
                   child: const Text('Retry'),
                 ),
@@ -76,10 +61,8 @@ class MyBorrowingsScreen extends ConsumerWidget {
           if (borrowings.isEmpty) {
             return RefreshIndicator(
               onRefresh: () async {
-                await ref.refresh(
-                  memberBorrowingsProvider(
-                    currentMemberId,
-                  ).future,
+                final _ = await ref.refresh(
+                  memberBorrowingsProvider(currentMemberId).future,
                 );
               },
               child: ListView(
@@ -87,9 +70,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
                 children: const [
                   SizedBox(
                     height: 300,
-                    child: Center(
-                      child: Text('No borrowings found.'),
-                    ),
+                    child: Center(child: Text('No borrowings found.')),
                   ),
                 ],
               ),
@@ -98,9 +79,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
 
           return booksResult.when(
             loading: () {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             },
             error: (error, stackTrace) {
               return Center(
@@ -120,18 +99,14 @@ class MyBorrowingsScreen extends ConsumerWidget {
               );
             },
             data: (books) {
-              final booksById = {
-                for (final book in books) book.id: book,
-              };
+              final booksById = {for (final book in books) book.id: book};
 
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(booksProvider);
 
-                  await ref.refresh(
-                    memberBorrowingsProvider(
-                      currentMemberId,
-                    ).future,
+                  final _ = await ref.refresh(
+                    memberBorrowingsProvider(currentMemberId).future,
                   );
                 },
                 child: ListView.separated(
@@ -174,9 +149,7 @@ class BorrowingListItem extends StatelessWidget {
 
     return ListTile(
       leading: const Icon(Icons.book_outlined),
-      title: Text(
-        currentBook?.title ?? 'Book #${borrowing.bookId}',
-      ),
+      title: Text(currentBook?.title ?? 'Book #${borrowing.bookId}'),
       subtitle: Text(
         [
           if (currentBook != null) currentBook.author,
@@ -185,9 +158,7 @@ class BorrowingListItem extends StatelessWidget {
         ].join('\n'),
       ),
       isThreeLine: true,
-      trailing: Chip(
-        label: Text(borrowing.status),
-      ),
+      trailing: Chip(label: Text(borrowing.status)),
     );
   }
 }
