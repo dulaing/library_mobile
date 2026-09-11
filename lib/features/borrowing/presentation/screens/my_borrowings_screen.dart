@@ -118,6 +118,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
                     return BorrowingListItem(
                       borrowing: borrowing,
                       book: booksById[borrowing.bookId],
+                      memberId: currentMemberId,
                     );
                   },
                   separatorBuilder: (context, index) {
@@ -133,19 +134,25 @@ class MyBorrowingsScreen extends ConsumerWidget {
   }
 }
 
-class BorrowingListItem extends StatelessWidget {
+class BorrowingListItem extends ConsumerWidget {
   const BorrowingListItem({
     required this.borrowing,
     required this.book,
+    required this.memberId,
     super.key,
   });
 
   final Borrowing borrowing;
   final Book? book;
+  final int memberId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentBook = book;
+    final isActive =
+        borrowing.returnedDate == null &&
+        borrowing.status.toLowerCase() != 'returned';
+    final returnState = ref.watch(returnBookControllerProvider(borrowing.id));
 
     return ListTile(
       leading: const Icon(Icons.book_outlined),
@@ -158,7 +165,72 @@ class BorrowingListItem extends StatelessWidget {
         ].join('\n'),
       ),
       isThreeLine: true,
-      trailing: Chip(label: Text(borrowing.status)),
+      trailing: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Chip(label: Text(borrowing.status)),
+          if (isActive)
+            TextButton(
+              onPressed: returnState.isLoading
+                  ? null
+                  : () => confirmAndReturn(context, ref),
+              child: Text(returnState.isLoading ? 'Returning...' : 'Return'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> confirmAndReturn(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Return book'),
+          content: Text(
+            'Mark "${book?.title ?? 'Book #${borrowing.bookId}'}" as returned?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Return'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !context.mounted) {
+      return;
+    }
+
+    final returnedBorrowing = await ref
+        .read(returnBookControllerProvider(borrowing.id).notifier)
+        .submit(memberId: memberId);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (returnedBorrowing == null) {
+      final error = ref.read(returnBookControllerProvider(borrowing.id)).error;
+      final message = error is Failure
+          ? error.message
+          : 'Could not return this book.';
+
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+      return;
+    }
+
+    ref.invalidate(booksProvider);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Book returned successfully.')),
     );
   }
 }
