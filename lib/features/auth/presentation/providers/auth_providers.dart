@@ -5,6 +5,7 @@ import '../../data/datasources/auth_remote_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/login.dart';
+import '../../domain/usecases/logout.dart';
 import '../../domain/entities/auth_session.dart';
 
 part 'auth_providers.g.dart';
@@ -18,9 +19,7 @@ AuthRemoteDataSource authRemoteDataSource(Ref ref) {
 
 @riverpod
 AuthRepository authRepository(Ref ref) {
-  final dataSource = ref.watch(
-    authRemoteDataSourceProvider,
-  );
+  final dataSource = ref.watch(authRemoteDataSourceProvider);
 
   return AuthRepositoryImpl(dataSource);
 }
@@ -30,6 +29,13 @@ Login login(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
 
   return Login(repository);
+}
+
+@riverpod
+Logout logout(Ref ref) {
+  final repository = ref.watch(authRepositoryProvider);
+
+  return Logout(repository);
 }
 
 // controller that performs login and remembers its current state.
@@ -49,30 +55,34 @@ class AuthController extends _$AuthController {
 
     final loginUser = ref.read(loginProvider);
 
-    final result = await loginUser(
-      email: email,
-      password: password,
-    );
+    final result = await loginUser(email: email, password: password);
 
     return result.fold(
-          (failure) {
-        state = AsyncError(
-          failure,
-          StackTrace.current,
-        );
+      (failure) {
+        state = AsyncError(failure, StackTrace.current);
 
         return null;
       },
-          (session) {
+      (session) {
         final dio = ref.read(apiClientProvider);
 
-        dio.options.headers['Authorization'] =
-        'Bearer ${session.accessToken}';
+        dio.options.headers['Authorization'] = 'Bearer ${session.accessToken}';
 
         state = AsyncData(session);
 
         return session;
       },
     );
+  }
+
+  Future<void> signOut() async {
+    final session = state.asData?.value;
+
+    if (session != null) {
+      await ref.read(logoutProvider)(session.refreshToken);
+    }
+
+    ref.read(apiClientProvider).options.headers.remove('Authorization');
+    state = const AsyncData(null);
   }
 }

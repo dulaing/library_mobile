@@ -138,6 +138,46 @@ final class LoginProvider extends $FunctionalProvider<Login, Login, Login>
 
 String _$loginHash() => r'dd1058fbf218798b084cca91e4b965806a8055bf';
 
+@ProviderFor(logout)
+final logoutProvider = LogoutProvider._();
+
+final class LogoutProvider extends $FunctionalProvider<Logout, Logout, Logout>
+    with $Provider<Logout> {
+  LogoutProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'logoutProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$logoutHash();
+
+  @$internal
+  @override
+  $ProviderElement<Logout> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Logout create(Ref ref) {
+    return logout(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Logout value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Logout>(value),
+    );
+  }
+}
+
+String _$logoutHash() => r'cbcd2b52a07afaac9349343df36c4518410024ad';
+
 @ProviderFor(AuthController)
 final authControllerProvider = AuthControllerProvider._();
 
@@ -162,7 +202,7 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'539df9fadf62c45f8d82ff2508de1cf0b10541fe';
+String _$authControllerHash() => r'1def752e840ddb5aa27e40dc41e0a2c0156f0ec0';
 
 abstract class _$AuthController extends $AsyncNotifier<AuthSession?> {
   FutureOr<AuthSession?> build();

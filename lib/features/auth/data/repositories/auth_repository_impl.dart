@@ -17,20 +17,25 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     try {
-      final session = await dataSource.login(
-        email: email,
-        password: password,
-      );
+      final session = await dataSource.login(email: email, password: password);
 
       return Right(session);
     } on ApiException catch (error) {
-      return Left(
-        AuthFailure(error.message),
-      );
+      return Left(AuthFailure(error.message));
     } catch (_) {
-      return const Left(
-        AuthFailure('Could not sign in.'),
-      );
+      return const Left(AuthFailure('Could not sign in.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> logout(String refreshToken) async {
+    try {
+      await dataSource.logout(refreshToken);
+      return const Right(null);
+    } on ApiException catch (error) {
+      return Left(AuthFailure(error.message));
+    } catch (_) {
+      return const Left(AuthFailure('Could not sign out.'));
     }
   }
 }
