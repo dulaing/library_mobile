@@ -153,6 +153,137 @@ final class GetMemberBorrowingsProvider
 String _$getMemberBorrowingsHash() =>
     r'a53fc75f38b3b0c15106651a0bfc45f081c51086';
 
+@ProviderFor(borrowBook)
+final borrowBookProvider = BorrowBookProvider._();
+
+final class BorrowBookProvider
+    extends $FunctionalProvider<BorrowBook, BorrowBook, BorrowBook>
+    with $Provider<BorrowBook> {
+  BorrowBookProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'borrowBookProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$borrowBookHash();
+
+  @$internal
+  @override
+  $ProviderElement<BorrowBook> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BorrowBook create(Ref ref) {
+    return borrowBook(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BorrowBook value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BorrowBook>(value),
+    );
+  }
+}
+
+String _$borrowBookHash() => r'c92308b05693bb2dc1bd6d844834f3a363c8a4ea';
+
+@ProviderFor(BorrowBookController)
+final borrowBookControllerProvider = BorrowBookControllerFamily._();
+
+final class BorrowBookControllerProvider
+    extends $AsyncNotifierProvider<BorrowBookController, void> {
+  BorrowBookControllerProvider._({
+    required BorrowBookControllerFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'borrowBookControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$borrowBookControllerHash();
+
+  @override
+  String toString() {
+    return r'borrowBookControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  BorrowBookController create() => BorrowBookController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is BorrowBookControllerProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$borrowBookControllerHash() =>
+    r'4bf46f60d7d9420a17396228870a67a8be39b6be';
+
+final class BorrowBookControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          BorrowBookController,
+          AsyncValue<void>,
+          void,
+          FutureOr<void>,
+          int
+        > {
+  BorrowBookControllerFamily._()
+    : super(
+        retry: null,
+        name: r'borrowBookControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  BorrowBookControllerProvider call(int bookId) =>
+      BorrowBookControllerProvider._(argument: bookId, from: this);
+
+  @override
+  String toString() => r'borrowBookControllerProvider';
+}
+
+abstract class _$BorrowBookController extends $AsyncNotifier<void> {
+  late final _$args = ref.$arg as int;
+  int get bookId => _$args;
+
+  FutureOr<void> build(int bookId);
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(_$args));
+  }
+}
+
 @ProviderFor(memberBorrowings)
 final memberBorrowingsProvider = MemberBorrowingsFamily._();
 
