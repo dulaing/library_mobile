@@ -10,4 +10,6 @@ abstract class BorrowingRepository {
     required int memberId,
     required int bookId,
   });
+
+  Future<Either<Failure, Borrowing>> returnBook(int borrowingId);
 }

@@ -10,6 +10,8 @@ abstract class BorrowingRemoteDataSource {
     required int memberId,
     required int bookId,
   });
+
+  Future<BorrowingModel> returnBook(int borrowingId);
 }
 
 class BorrowingRemoteDataSourceImpl implements BorrowingRemoteDataSource {
@@ -49,6 +51,22 @@ class BorrowingRemoteDataSourceImpl implements BorrowingRemoteDataSource {
         data: {'memberId': memberId, 'bookId': bookId},
       );
 
+      final responseData = response.data;
+
+      if (responseData is! Map) {
+        throw const ApiException('The server returned invalid borrowing data.');
+      }
+
+      return BorrowingModel.fromJson(Map<String, dynamic>.from(responseData));
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
+  @override
+  Future<BorrowingModel> returnBook(int borrowingId) async {
+    try {
+      final response = await dio.post('/api/borrowings/$borrowingId/return');
       final responseData = response.data;
 
       if (responseData is! Map) {

@@ -44,4 +44,16 @@ class BorrowingRepositoryImpl implements BorrowingRepository {
       return const Left(BorrowingFailure('Could not borrow this book.'));
     }
   }
+
+  @override
+  Future<Either<Failure, Borrowing>> returnBook(int borrowingId) async {
+    try {
+      final borrowing = await dataSource.returnBook(borrowingId);
+      return Right(borrowing);
+    } on ApiException catch (error) {
+      return Left(BorrowingFailure(error.message));
+    } catch (_) {
+      return const Left(BorrowingFailure('Could not return this book.'));
+    }
+  }
 }
