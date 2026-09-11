@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -38,15 +39,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     // goes back to login screen
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create account'),
-      ),
+      appBar: AppBar(title: const Text('Create account')),
       body: SafeArea(
         child: Form(
           key: formKey,
@@ -122,9 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       });
                     },
                     icon: Icon(
-                      hidePassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                      hidePassword ? Icons.visibility : Icons.visibility_off,
                     ),
                   ),
                 ),

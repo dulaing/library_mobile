@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../../core/router/app_route_names.dart';
 import '../providers/auth_providers.dart';
-
-import '../../../../core/router/member_navigation_shell.dart';
-import 'register_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -17,7 +16,7 @@ class LoginScreen extends ConsumerStatefulWidget {
   }
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen>  {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -38,54 +37,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen>  {
       return;
     }
 
-    final session = await ref
+    await ref
         .read(authControllerProvider.notifier)
         .signIn(
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
-
-    if (!mounted || session == null) {
-      return;
-    }
-
-    final memberId = session.memberId;
-
-    if (memberId == null) {
-      return;
-    }
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) {
-          return MemberNavigationShell(
-            memberId: memberId,
-          );
-        },
-      ),
-    );
+          email: emailController.text.trim(),
+          password: passwordController.text,
+        );
   }
 
   void openRegisterScreen() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return const RegisterScreen();
-        },
-      ),
-    );
+    context.pushNamed(AppRouteNames.register);
   }
 
   @override
   Widget build(BuildContext context) {
-
     final authState = ref.watch(authControllerProvider);
 
     final authError = authState.error;
 
-    final errorMessage = authError is Failure
-        ? authError.message
-        : null;
+    final errorMessage = authError is Failure ? authError.message : null;
 
     return Scaffold(
       body: SafeArea(
@@ -167,12 +137,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>  {
                     onPressed: authState.isLoading ? null : signIn,
                     child: authState.isLoading
                         ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    )
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : const Text('Sign in'),
                   ),
                   if (errorMessage != null) ...[

@@ -1,50 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../features/member/presentation/screens/member_home_screen.dart';
-import '../../features/book/presentation/screens/books_screen.dart';
-import '../../features/borrowing/presentation/screens/my_borrowings_screen.dart';
-import '../../features/member/presentation/screens/member_profile_screen.dart';
+class MemberNavigationShell extends StatelessWidget {
+  const MemberNavigationShell({required this.navigationShell, super.key});
 
-class MemberNavigationShell extends StatefulWidget {
-  const MemberNavigationShell({
-    required this.memberId,
-    super.key,
-  });
-
-  final int memberId;
-
-  @override
-  State<MemberNavigationShell> createState() {
-    return _MemberNavigationShellState();
-  }
-}
-
-class _MemberNavigationShellState extends State<MemberNavigationShell> {
-  int selectedIndex = 0;
-
-  void selectPage(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: selectedIndex,
-        children: [
-          const MemberHomeScreen(),
-          const BooksScreen(),
-          MyBorrowingsScreen(
-            memberId: widget.memberId,
-          ),
-          const MemberProfileScreen(),
-        ],
-      ),
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: selectPage,
+        selectedIndex: navigationShell.currentIndex,
+        onDestinationSelected: (index) {
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),

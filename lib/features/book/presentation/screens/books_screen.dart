@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../../core/router/app_route_names.dart';
 import '../providers/book_providers.dart';
 import '../widgets/book_list_item.dart';
-import 'book_details_screen.dart';
 
 class BooksScreen extends ConsumerWidget {
   const BooksScreen({super.key});
@@ -66,15 +67,16 @@ class BooksScreen extends ConsumerWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: books.length,
               itemBuilder: (context, index) {
+                final book = books[index];
+
                 return BookListItem(
-                  book: books[index],
+                  book: book,
                   onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return BookDetailsScreen(book: books[index]);
-                        },
-                      ),
+                    context.pushNamed(
+                      AppRouteNames.bookDetails,
+                      pathParameters: {
+                        'bookId': book.id.toString(),
+                      },
                     );
                   },
                 );
