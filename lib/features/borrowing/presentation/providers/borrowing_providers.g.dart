@@ -284,6 +284,137 @@ abstract class _$BorrowBookController extends $AsyncNotifier<void> {
   }
 }
 
+@ProviderFor(returnBook)
+final returnBookProvider = ReturnBookProvider._();
+
+final class ReturnBookProvider
+    extends $FunctionalProvider<ReturnBook, ReturnBook, ReturnBook>
+    with $Provider<ReturnBook> {
+  ReturnBookProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'returnBookProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$returnBookHash();
+
+  @$internal
+  @override
+  $ProviderElement<ReturnBook> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ReturnBook create(Ref ref) {
+    return returnBook(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ReturnBook value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ReturnBook>(value),
+    );
+  }
+}
+
+String _$returnBookHash() => r'340980104280cae066280370d55a25cdd570e0ed';
+
+@ProviderFor(ReturnBookController)
+final returnBookControllerProvider = ReturnBookControllerFamily._();
+
+final class ReturnBookControllerProvider
+    extends $AsyncNotifierProvider<ReturnBookController, void> {
+  ReturnBookControllerProvider._({
+    required ReturnBookControllerFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'returnBookControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$returnBookControllerHash();
+
+  @override
+  String toString() {
+    return r'returnBookControllerProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  ReturnBookController create() => ReturnBookController();
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReturnBookControllerProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$returnBookControllerHash() =>
+    r'3a13c228fe228fb2c972908fc7bd52c851a6123a';
+
+final class ReturnBookControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          ReturnBookController,
+          AsyncValue<void>,
+          void,
+          FutureOr<void>,
+          int
+        > {
+  ReturnBookControllerFamily._()
+    : super(
+        retry: null,
+        name: r'returnBookControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ReturnBookControllerProvider call(int borrowingId) =>
+      ReturnBookControllerProvider._(argument: borrowingId, from: this);
+
+  @override
+  String toString() => r'returnBookControllerProvider';
+}
+
+abstract class _$ReturnBookController extends $AsyncNotifier<void> {
+  late final _$args = ref.$arg as int;
+  int get borrowingId => _$args;
+
+  FutureOr<void> build(int borrowingId);
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, () => build(_$args));
+  }
+}
+
 @ProviderFor(memberBorrowings)
 final memberBorrowingsProvider = MemberBorrowingsFamily._();
 

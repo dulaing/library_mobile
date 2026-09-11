@@ -9,6 +9,7 @@ import '../../domain/entities/borrowing.dart';
 import '../../domain/repositories/borrowing_repository.dart';
 import '../../domain/usecases/borrow_book.dart';
 import '../../domain/usecases/get_member_borrowings.dart';
+import '../../domain/usecases/return_book.dart';
 
 part 'borrowing_providers.g.dart';
 
@@ -50,6 +51,38 @@ class BorrowBookController extends _$BorrowBookController {
 
     final borrow = ref.read(borrowBookProvider);
     final result = await borrow(memberId: memberId, bookId: bookId);
+
+    return result.fold(
+      (failure) {
+        state = AsyncError(failure, StackTrace.current);
+        return null;
+      },
+      (borrowing) {
+        ref.invalidate(memberBorrowingsProvider(memberId));
+        state = const AsyncData(null);
+        return borrowing;
+      },
+    );
+  }
+}
+
+@riverpod
+ReturnBook returnBook(Ref ref) {
+  final repository = ref.watch(borrowingRepositoryProvider);
+
+  return ReturnBook(repository);
+}
+
+@riverpod
+class ReturnBookController extends _$ReturnBookController {
+  @override
+  FutureOr<void> build(int borrowingId) {}
+
+  Future<Borrowing?> submit({required int memberId}) async {
+    state = const AsyncLoading();
+
+    final returnBorrowing = ref.read(returnBookProvider);
+    final result = await returnBorrowing(borrowingId);
 
     return result.fold(
       (failure) {
