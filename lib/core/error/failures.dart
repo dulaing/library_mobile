@@ -21,6 +21,10 @@ class AuthFailure extends Failure {
   const AuthFailure(String message) : super(message);
 }
 
+class MemberFailure extends Failure {
+  const MemberFailure(String message) : super(message);
+}
+
 /*
   final failure = DataFailure();
 
