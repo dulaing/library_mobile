@@ -20,4 +20,8 @@ class AuthSession {
   bool get accessTokenIsExpired {
     return DateTime.now().toUtc().isAfter(expiresAtUtc);
   }
+
+  bool get refreshTokenIsExpired {
+    return DateTime.now().toUtc().isAfter(refreshTokenExpiresAtUtc);
+  }
 }

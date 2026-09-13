@@ -96,7 +96,7 @@ final class AuthRepositoryProvider
   }
 }
 
-String _$authRepositoryHash() => r'5ea3fe363d8516b372a67524a2da1bfea56705df';
+String _$authRepositoryHash() => r'adc39ccadd9c1cd74cbb0280ec05cc61f167a6f9';
 
 @ProviderFor(login)
 final loginProvider = LoginProvider._();
@@ -260,6 +260,95 @@ final class GetCurrentUserProvider
 
 String _$getCurrentUserHash() => r'1a2852689c2010e44c171e226239a571eef58a5a';
 
+@ProviderFor(restoreSession)
+final restoreSessionProvider = RestoreSessionProvider._();
+
+final class RestoreSessionProvider
+    extends $FunctionalProvider<RestoreSession, RestoreSession, RestoreSession>
+    with $Provider<RestoreSession> {
+  RestoreSessionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'restoreSessionProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$restoreSessionHash();
+
+  @$internal
+  @override
+  $ProviderElement<RestoreSession> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  RestoreSession create(Ref ref) {
+    return restoreSession(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RestoreSession value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RestoreSession>(value),
+    );
+  }
+}
+
+String _$restoreSessionHash() => r'4e4378a744e34fe266949fb4107362c651238618';
+
+@ProviderFor(authLocalDataSource)
+final authLocalDataSourceProvider = AuthLocalDataSourceProvider._();
+
+final class AuthLocalDataSourceProvider
+    extends
+        $FunctionalProvider<
+          AuthLocalDataSource,
+          AuthLocalDataSource,
+          AuthLocalDataSource
+        >
+    with $Provider<AuthLocalDataSource> {
+  AuthLocalDataSourceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'authLocalDataSourceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$authLocalDataSourceHash();
+
+  @$internal
+  @override
+  $ProviderElement<AuthLocalDataSource> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  AuthLocalDataSource create(Ref ref) {
+    return authLocalDataSource(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AuthLocalDataSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AuthLocalDataSource>(value),
+    );
+  }
+}
+
+String _$authLocalDataSourceHash() =>
+    r'c5fe79a873c29236d1c7e15bd32d8169675aea8d';
+
 @ProviderFor(AuthController)
 final authControllerProvider = AuthControllerProvider._();
 
@@ -284,7 +373,7 @@ final class AuthControllerProvider
   AuthController create() => AuthController();
 }
 
-String _$authControllerHash() => r'1def752e840ddb5aa27e40dc41e0a2c0156f0ec0';
+String _$authControllerHash() => r'8e79191a9a55de00c2b9e8d41c7f8b5894b60dcb';
 
 abstract class _$AuthController extends $AsyncNotifier<AuthSession?> {
   FutureOr<AuthSession?> build();

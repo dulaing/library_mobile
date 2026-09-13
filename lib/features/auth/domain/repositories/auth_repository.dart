@@ -15,4 +15,6 @@ abstract class AuthRepository {
   Future<Either<Failure, AuthSession>> refresh(String refreshToken);
 
   Future<Either<Failure, CurrentUser>> getCurrentUser();
+
+  Future<AuthSession?> restoreSession();
 }

@@ -6,11 +6,16 @@ import '../../domain/entities/auth_session.dart';
 import '../../domain/entities/current_user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_data_source.dart';
+import '../datasources/auth_local_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl(this.dataSource);
+  AuthRepositoryImpl(
+      this.dataSource,
+      this.localDataSource,
+      );
 
   final AuthRemoteDataSource dataSource;
+  final AuthLocalDataSource localDataSource;
 
   @override
   Future<Either<Failure, AuthSession>> login({
@@ -19,10 +24,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       final session = await dataSource.login(email: email, password: password);
-
+      await localDataSource.saveSession(session);
       return Right(session);
+
     } on ApiException catch (error) {
       return Left(AuthFailure(error.message));
+
     } catch (_) {
       return const Left(AuthFailure('Could not sign in.'));
     }
@@ -37,6 +44,8 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(AuthFailure(error.message));
     } catch (_) {
       return const Left(AuthFailure('Could not sign out.'));
+    } finally {
+      await localDataSource.clearSession();
     }
   }
 
@@ -46,7 +55,9 @@ class AuthRepositoryImpl implements AuthRepository {
       ) async {
     try {
       final session = await dataSource.refresh(refreshToken);
+      await localDataSource.saveSession(session);
       return Right(session);
+
     } on ApiException catch (error) {
       return Left(AuthFailure(error.message));
     } catch (_) {
@@ -67,6 +78,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(
         AuthFailure('Could not verify the session.'),
       );
+    }
+  }
+
+  @override
+  Future<AuthSession?> restoreSession() async {
+    try {
+      return await localDataSource.readSession();
+    } catch (_) {
+      await localDataSource.clearSession();
+      return null;
     }
   }
 }

@@ -1,13 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../data/datasources/auth_remote_data_source.dart';
+import '../../data/datasources/auth_local_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/login.dart';
 import '../../domain/usecases/logout.dart';
 import '../../domain/usecases/get_current_user.dart';
 import '../../domain/usecases/refresh_session.dart';
+import '../../domain/usecases/restore_session.dart';
 import '../../domain/entities/auth_session.dart';
 
 
@@ -22,9 +25,10 @@ AuthRemoteDataSource authRemoteDataSource(Ref ref) {
 
 @riverpod
 AuthRepository authRepository(Ref ref) {
-  final dataSource = ref.watch(authRemoteDataSourceProvider);
-
-  return AuthRepositoryImpl(dataSource);
+  return AuthRepositoryImpl(
+    ref.watch(authRemoteDataSourceProvider),
+    ref.watch(authLocalDataSourceProvider),
+  );
 }
 
 @riverpod
@@ -51,13 +55,80 @@ GetCurrentUser getCurrentUser(Ref ref) {
   return GetCurrentUser(ref.watch(authRepositoryProvider));
 }
 
+@riverpod
+RestoreSession restoreSession(Ref ref) {
+  return RestoreSession(
+    ref.watch(authRepositoryProvider),
+  );
+}
+
+// local data-source provider:
+@Riverpod(keepAlive: true)
+AuthLocalDataSource authLocalDataSource(Ref ref) {
+  return AuthLocalDataSourceImpl(
+    const FlutterSecureStorage(),
+  );
+}
+
 // controller that performs login and remembers its current state.
 // keepAlive: true means Riverpod keeps the logged-in session in memory while the app is running.
 @Riverpod(keepAlive: true)
 class AuthController extends _$AuthController {
   @override
   Future<AuthSession?> build() async {
-    return null;
+    final savedSession = await ref.read(restoreSessionProvider)();
+
+    if (savedSession == null) {
+      return null;
+    }
+
+    if (savedSession.refreshTokenIsExpired) {
+      await ref.read(logoutProvider)(savedSession.refreshToken);
+      return null;
+    }
+
+    var activeSession = savedSession;
+
+    if (savedSession.accessTokenIsExpired) {
+      final result = await ref.read(
+        refreshSessionProvider,
+      )(savedSession.refreshToken);
+
+      final refreshedSession = result.fold<AuthSession?>(
+            (failure) => null,
+            (session) => session,
+      );
+
+      if (refreshedSession == null) {
+        await ref.read(logoutProvider)(savedSession.refreshToken);
+        return null;
+      }
+
+      activeSession = refreshedSession;
+    }
+
+    final dio = ref.read(apiClientProvider);
+
+    dio.options.headers['Authorization'] =
+    'Bearer ${activeSession.accessToken}';
+
+    final currentUserResult = await ref.read(
+      getCurrentUserProvider,
+    )();
+
+    final currentUser = currentUserResult.fold(
+          (failure) => null,
+          (user) => user,
+    );
+
+    if (currentUser == null ||
+        currentUser.userId != activeSession.userId) {
+      await ref.read(logoutProvider)(activeSession.refreshToken);
+      dio.options.headers.remove('Authorization');
+      return null;
+    }
+
+    return activeSession;
   }
 
   Future<AuthSession?> signIn({
