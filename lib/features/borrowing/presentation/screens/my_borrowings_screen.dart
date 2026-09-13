@@ -154,28 +154,71 @@ class BorrowingListItem extends ConsumerWidget {
         borrowing.status.toLowerCase() != 'returned';
     final returnState = ref.watch(returnBookControllerProvider(borrowing.id));
 
-    return ListTile(
-      leading: const Icon(Icons.book_outlined),
-      title: Text(currentBook?.title ?? 'Book #${borrowing.bookId}'),
-      subtitle: Text(
-        [
-          if (currentBook != null) currentBook.author,
-          'Borrowed: ${formatDate(borrowing.borrowedDate)}',
-          'Due: ${formatDate(borrowing.dueDate)}',
-        ].join('\n'),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 10,
       ),
-      isThreeLine: true,
-      trailing: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Chip(label: Text(borrowing.status)),
-          if (isActive)
-            TextButton(
-              onPressed: returnState.isLoading
-                  ? null
-                  : () => confirmAndReturn(context, ref),
-              child: Text(returnState.isLoading ? 'Returning...' : 'Return'),
+          const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Icon(Icons.book_outlined),
+          ),
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  currentBook?.title ?? 'Book #${borrowing.bookId}',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                if (currentBook != null) ...[
+                  const SizedBox(height: 3),
+                  Text(
+                    currentBook.author,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+                const SizedBox(height: 6),
+                Text(
+                  'Borrowed: ${formatDate(borrowing.borrowedDate)}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Text(
+                  'Due: ${formatDate(borrowing.dueDate)}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ),
+          ),
+
+          const SizedBox(width: 8),
+
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Chip(
+                label: Text(borrowing.status),
+                visualDensity: VisualDensity.compact,
+              ),
+              if (isActive)
+                TextButton(
+                  onPressed: returnState.isLoading
+                      ? null
+                      : () => confirmAndReturn(context, ref),
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                  ),
+                  child: Text(
+                    returnState.isLoading ? 'Returning...' : 'Return',
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
     );
