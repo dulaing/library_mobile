@@ -6,7 +6,10 @@ import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/login.dart';
 import '../../domain/usecases/logout.dart';
+import '../../domain/usecases/get_current_user.dart';
+import '../../domain/usecases/refresh_session.dart';
 import '../../domain/entities/auth_session.dart';
+
 
 part 'auth_providers.g.dart';
 
@@ -36,6 +39,16 @@ Logout logout(Ref ref) {
   final repository = ref.watch(authRepositoryProvider);
 
   return Logout(repository);
+}
+
+@riverpod
+RefreshSession refreshSession(Ref ref) {
+  return RefreshSession(ref.watch(authRepositoryProvider));
+}
+
+@riverpod
+GetCurrentUser getCurrentUser(Ref ref) {
+  return GetCurrentUser(ref.watch(authRepositoryProvider));
 }
 
 // controller that performs login and remembers its current state.

@@ -178,6 +178,88 @@ final class LogoutProvider extends $FunctionalProvider<Logout, Logout, Logout>
 
 String _$logoutHash() => r'cbcd2b52a07afaac9349343df36c4518410024ad';
 
+@ProviderFor(refreshSession)
+final refreshSessionProvider = RefreshSessionProvider._();
+
+final class RefreshSessionProvider
+    extends $FunctionalProvider<RefreshSession, RefreshSession, RefreshSession>
+    with $Provider<RefreshSession> {
+  RefreshSessionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'refreshSessionProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$refreshSessionHash();
+
+  @$internal
+  @override
+  $ProviderElement<RefreshSession> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  RefreshSession create(Ref ref) {
+    return refreshSession(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(RefreshSession value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<RefreshSession>(value),
+    );
+  }
+}
+
+String _$refreshSessionHash() => r'1b2fe416398e0e09f505e2e643856113040f0ba7';
+
+@ProviderFor(getCurrentUser)
+final getCurrentUserProvider = GetCurrentUserProvider._();
+
+final class GetCurrentUserProvider
+    extends $FunctionalProvider<GetCurrentUser, GetCurrentUser, GetCurrentUser>
+    with $Provider<GetCurrentUser> {
+  GetCurrentUserProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getCurrentUserProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getCurrentUserHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetCurrentUser> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GetCurrentUser create(Ref ref) {
+    return getCurrentUser(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetCurrentUser value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetCurrentUser>(value),
+    );
+  }
+}
+
+String _$getCurrentUserHash() => r'1a2852689c2010e44c171e226239a571eef58a5a';
+
 @ProviderFor(AuthController)
 final authControllerProvider = AuthControllerProvider._();
 
