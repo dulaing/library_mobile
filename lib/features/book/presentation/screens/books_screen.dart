@@ -7,11 +7,20 @@ import '../../../../core/router/app_route_names.dart';
 import '../providers/book_providers.dart';
 import '../widgets/book_list_item.dart';
 
-class BooksScreen extends ConsumerWidget {
+class BooksScreen extends ConsumerStatefulWidget {
   const BooksScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<BooksScreen> createState() {
+    return _BooksScreenState();
+  }
+}
+
+class _BooksScreenState extends ConsumerState<BooksScreen> {
+  String searchText = '';
+
+  @override
+  Widget build(BuildContext context) {
     final booksResult = ref.watch(booksProvider);
 
     return Scaffold(
@@ -42,49 +51,63 @@ class BooksScreen extends ConsumerWidget {
           );
         },
         data: (books) {
-          if (books.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                await ref.refresh(booksProvider.future);
-              },
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(
-                    height: 300,
-                    child: Center(child: Text('No books found.')),
+          final query = searchText.trim().toLowerCase();
+
+          final filteredBooks = books.where((book) {
+            return book.title.toLowerCase().contains(query) ||
+                book.author.toLowerCase().contains(query) ||
+                book.isbn.toLowerCase().contains(query);
+          }).toList();
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: TextField(
+                  decoration: const InputDecoration(
+                    hintText: 'Search by title, author, or ISBN',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
                   ),
-                ],
-              ),
-            );
-          }
-
-          return RefreshIndicator(
-            onRefresh: () async {
-              await ref.refresh(booksProvider.future);
-            },
-            child: ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: books.length,
-              itemBuilder: (context, index) {
-                final book = books[index];
-
-                return BookListItem(
-                  book: book,
-                  onTap: () {
-                    context.pushNamed(
-                      AppRouteNames.bookDetails,
-                      pathParameters: {
-                        'bookId': book.id.toString(),
-                      },
-                    );
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                    });
                   },
-                );
-              },
-              separatorBuilder: (context, index) {
-                return const Divider(height: 1);
-              },
-            ),
+                ),
+              ),
+              Expanded(
+                child: filteredBooks.isEmpty
+                    ? const Center(child: Text('No matching books found.'))
+                    : RefreshIndicator(
+                        onRefresh: () async {
+                          await ref.refresh(booksProvider.future);
+                        },
+                        child: ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount: filteredBooks.length,
+                          itemBuilder: (context, index) {
+                            final book = filteredBooks[index];
+
+                            return BookListItem(
+                              book: book,
+                              onTap: () {
+                                context.pushNamed(
+                                  AppRouteNames.bookDetails,
+                                  pathParameters: {
+                                    'bookId': book.id.toString(),
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider(height: 1);
+                          },
+                        ),
+                      ),
+              ),
+            ],
           );
         },
       ),
