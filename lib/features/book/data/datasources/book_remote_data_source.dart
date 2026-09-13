@@ -5,6 +5,7 @@ import '../models/book_model.dart';
 
 abstract class BookRemoteDataSource {
   Future<List<BookModel>> getBooks();
+  Future<BookModel> getBook(int bookId);
 }
 
 class BookRemoteDataSourceImpl implements BookRemoteDataSource {
@@ -33,6 +34,26 @@ class BookRemoteDataSourceImpl implements BookRemoteDataSource {
 
         return BookModel.fromJson(item);
       }).toList();
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
+  @override
+  Future<BookModel> getBook(int bookId) async {
+    try {
+      final response = await dio.get('/api/books/$bookId');
+      final data = response.data;
+
+      if (data is! Map) {
+        throw const ApiException(
+          'The server returned invalid book data.',
+        );
+      }
+
+      return BookModel.fromJson(
+        Map<String, dynamic>.from(data),
+      );
     } on DioException catch (error) {
       throw ApiException.fromDio(error);
     }

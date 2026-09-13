@@ -5,6 +5,7 @@ import '../../data/datasources/book_remote_data_source.dart';
 import '../../data/repositories/book_repository_impl.dart';
 import '../../domain/entities/book.dart';
 import '../../domain/repositories/book_repository.dart';
+import '../../domain/usecases/get_book.dart';
 import '../../domain/usecases/get_books.dart';
 
 part 'book_providers.g.dart';
@@ -34,6 +35,13 @@ GetBooks getBooks(Ref ref) {
   return GetBooks(repository);
 }
 
+@riverpod
+GetBook getBook(Ref ref) {
+  return GetBook(
+    ref.watch(bookRepositoryProvider),
+  );
+}
+
 @Riverpod(retry: noRetry)
 Future<List<Book>> books(Ref ref) async {
   final getBooks = ref.watch(getBooksProvider);
@@ -42,5 +50,16 @@ Future<List<Book>> books(Ref ref) async {
   return result.fold(
         (failure) => throw failure,
         (books) => books,
+  );
+}
+
+@Riverpod(retry: noRetry)
+Future<Book> book(Ref ref, int bookId) async {
+  final getBook = ref.watch(getBookProvider);
+  final result = await getBook(bookId);
+
+  return result.fold(
+        (failure) => throw failure,
+        (book) => book,
   );
 }

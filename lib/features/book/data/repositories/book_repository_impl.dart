@@ -21,4 +21,14 @@ class BookRepositoryImpl implements BookRepository {
       return const Left(DataFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, Book>> getBook(int bookId) async {
+    try {
+      final book = await dataSource.getBook(bookId);
+      return Right(book);
+    } on ApiException {
+      return const Left(DataFailure());
+    }
+  }
 }

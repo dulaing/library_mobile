@@ -143,9 +143,17 @@ class BookDetailsScreen extends ConsumerWidget {
       return;
     }
 
-    final viewBorrowings = await showBorrowingSuccess(context, borrowing);
+    final viewBorrowings = await showBorrowingSuccess(
+      context,
+      borrowing,
+    );
 
     ref.invalidate(booksProvider);
+    ref.invalidate(bookProvider(book.id));
+
+    if (context.mounted && viewBorrowings) {
+      context.goNamed(AppRouteNames.borrowings);
+    }
 
     if (context.mounted && viewBorrowings) {
       context.goNamed(AppRouteNames.borrowings);

@@ -5,13 +5,13 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
-import '../../features/book/domain/entities/book.dart';
 import '../../features/book/presentation/providers/book_providers.dart';
 import '../../features/book/presentation/screens/book_details_screen.dart';
 import '../../features/book/presentation/screens/books_screen.dart';
 import '../../features/borrowing/presentation/screens/my_borrowings_screen.dart';
 import '../../features/member/presentation/screens/member_home_screen.dart';
 import '../../features/member/presentation/screens/member_profile_screen.dart';
+import '../error/failures.dart';
 import 'app_route_names.dart';
 import 'member_navigation_shell.dart';
 
@@ -133,42 +133,52 @@ class _BookDetailsRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (bookId == null) {
+    final currentBookId = bookId;
+
+    if (currentBookId == null) {
       return const _BookNotFoundScreen();
     }
 
-    final booksResult = ref.watch(booksProvider);
+    final bookResult = ref.watch(
+      bookProvider(currentBookId),
+    );
 
-    return booksResult.when(
+    return bookResult.when(
       loading: () {
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
       },
       error: (error, stackTrace) {
+        final message = error is Failure
+            ? error.message
+            : 'Could not load this book.';
+
         return Scaffold(
           appBar: AppBar(title: const Text('Book Details')),
           body: Center(
-            child: FilledButton(
-              onPressed: () => ref.invalidate(booksProvider),
-              child: const Text('Retry'),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(message),
+                const SizedBox(height: 12),
+                FilledButton(
+                  onPressed: () {
+                    ref.invalidate(
+                      bookProvider(currentBookId),
+                    );
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
             ),
           ),
         );
       },
-      data: (books) {
-        Book? selectedBook;
-
-        for (final book in books) {
-          if (book.id == bookId) {
-            selectedBook = book;
-            break;
-          }
-        }
-
-        if (selectedBook == null) {
-          return const _BookNotFoundScreen();
-        }
-
-        return BookDetailsScreen(book: selectedBook);
+      data: (book) {
+        return BookDetailsScreen(book: book);
       },
     );
   }
