@@ -11,7 +11,6 @@ import '../../features/book/presentation/screens/books_screen.dart';
 import '../../features/borrowing/presentation/screens/my_borrowings_screen.dart';
 import '../../features/member/presentation/screens/member_home_screen.dart';
 import '../../features/member/presentation/screens/member_profile_screen.dart';
-import '../error/failures.dart';
 import 'app_route_names.dart';
 import 'member_navigation_shell.dart';
 
@@ -133,15 +132,13 @@ class _BookDetailsRoute extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentBookId = bookId;
+    final id = bookId;
 
-    if (currentBookId == null) {
+    if (id == null) {
       return const _BookNotFoundScreen();
     }
 
-    final bookResult = ref.watch(
-      bookProvider(currentBookId),
-    );
+    final bookResult = ref.watch(bookProvider(id));
 
     return bookResult.when(
       loading: () {
@@ -152,30 +149,7 @@ class _BookDetailsRoute extends ConsumerWidget {
         );
       },
       error: (error, stackTrace) {
-        final message = error is Failure
-            ? error.message
-            : 'Could not load this book.';
-
-        return Scaffold(
-          appBar: AppBar(title: const Text('Book Details')),
-          body: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(message),
-                const SizedBox(height: 12),
-                FilledButton(
-                  onPressed: () {
-                    ref.invalidate(
-                      bookProvider(currentBookId),
-                    );
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          ),
-        );
+        return const _BookNotFoundScreen();
       },
       data: (book) {
         return BookDetailsScreen(book: book);

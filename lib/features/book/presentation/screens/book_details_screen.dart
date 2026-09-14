@@ -154,10 +154,6 @@ class BookDetailsScreen extends ConsumerWidget {
     if (context.mounted && viewBorrowings) {
       context.goNamed(AppRouteNames.borrowings);
     }
-
-    if (context.mounted && viewBorrowings) {
-      context.goNamed(AppRouteNames.borrowings);
-    }
   }
 
   Future<void> showBorrowingError(BuildContext context, WidgetRef ref) async {

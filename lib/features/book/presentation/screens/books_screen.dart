@@ -81,7 +81,7 @@ class _BooksScreenState extends ConsumerState<BooksScreen> {
                     ? const Center(child: Text('No matching books found.'))
                     : RefreshIndicator(
                         onRefresh: () async {
-                          await ref.refresh(booksProvider.future);
+                          final _ = await ref.refresh(booksProvider.future);
                         },
                         child: ListView.separated(
                           physics: const AlwaysScrollableScrollPhysics(),
