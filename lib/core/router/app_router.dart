@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/presentation/screens/admin_home_screen.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -18,30 +19,40 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
   final session = authState.asData?.value;
   final memberId = session?.memberId;
+  final isAdmin = session?.role.toLowerCase() == 'admin';
+  final isMember = session?.role.toLowerCase() == 'member' && memberId != null;
 
   final router = GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final isMemberSignedIn = memberId != null;
       final isOnAuthScreen =
           state.matchedLocation == '/login' ||
           state.matchedLocation == '/register';
+      final isOnAdminScreen = state.matchedLocation.startsWith('/admin');
 
-      if (!isMemberSignedIn && !isOnAuthScreen) {
-        return '/login';
+      if (session == null) {
+        return isOnAuthScreen ? null : '/login';
       }
 
-      if (isMemberSignedIn && isOnAuthScreen) {
-        return '/home';
+      if (isAdmin) {
+        return isOnAdminScreen ? null : '/admin';
       }
 
-      return null;
+      if (isMember) {
+        return isOnAuthScreen || isOnAdminScreen ? '/home' : null;
+      }
+
+      return isOnAuthScreen ? null : '/login';
     },
     routes: [
       GoRoute(
         path: '/',
         redirect: (context, state) {
-          return memberId == null ? '/login' : '/home';
+          if (isAdmin) {
+            return '/admin';
+          }
+
+          return isMember ? '/home' : '/login';
         },
       ),
       GoRoute(
@@ -53,6 +64,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/register',
         name: AppRouteNames.register,
         builder: (context, state) => const RegisterScreen(),
+      ),
+      GoRoute(
+        path: '/admin',
+        name: AppRouteNames.adminHome,
+        builder: (context, state) => const AdminHomeScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -142,11 +158,7 @@ class _BookDetailsRoute extends ConsumerWidget {
 
     return bookResult.when(
       loading: () {
-        return const Scaffold(
-          body: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
       error: (error, stackTrace) {
         return const _BookNotFoundScreen();
