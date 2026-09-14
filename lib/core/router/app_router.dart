@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/admin/presentation/screens/admin_books_screen.dart';
+import '../../features/admin/presentation/screens/admin_borrowings_screen.dart';
 import '../../features/admin/presentation/screens/admin_home_screen.dart';
+import '../../features/admin/presentation/screens/admin_members_screen.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -12,6 +15,7 @@ import '../../features/book/presentation/screens/books_screen.dart';
 import '../../features/borrowing/presentation/screens/my_borrowings_screen.dart';
 import '../../features/member/presentation/screens/member_home_screen.dart';
 import '../../features/member/presentation/screens/member_profile_screen.dart';
+import 'admin_navigation_shell.dart';
 import 'app_route_names.dart';
 import 'member_navigation_shell.dart';
 
@@ -65,10 +69,48 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: AppRouteNames.register,
         builder: (context, state) => const RegisterScreen(),
       ),
-      GoRoute(
-        path: '/admin',
-        name: AppRouteNames.adminHome,
-        builder: (context, state) => const AdminHomeScreen(),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return AdminNavigationShell(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/admin',
+                name: AppRouteNames.adminHome,
+                builder: (context, state) => const AdminHomeScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/admin/books',
+                name: AppRouteNames.adminBooks,
+                builder: (context, state) => const AdminBooksScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/admin/borrowings',
+                name: AppRouteNames.adminBorrowings,
+                builder: (context, state) => const AdminBorrowingsScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/admin/members',
+                name: AppRouteNames.adminMembers,
+                builder: (context, state) => const AdminMembersScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
