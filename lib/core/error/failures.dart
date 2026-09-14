@@ -6,11 +6,7 @@ abstract class Failure {
 }
 
 class DataFailure extends Failure {
-  // constructor for DataFailure (takes no arguments)
-  const DataFailure()
-    : super(
-        'Could not load books.',
-      ); //super calls the parent Failure constructor
+  const DataFailure([String message = 'Could not load books.']) : super(message);
 }
 
 class BorrowingFailure extends Failure {

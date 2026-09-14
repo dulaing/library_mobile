@@ -180,6 +180,129 @@ final class GetBookProvider
 
 String _$getBookHash() => r'37075c22637265291c565c8f1e3181b202c9bf77';
 
+@ProviderFor(createBook)
+final createBookProvider = CreateBookProvider._();
+
+final class CreateBookProvider
+    extends $FunctionalProvider<CreateBook, CreateBook, CreateBook>
+    with $Provider<CreateBook> {
+  CreateBookProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'createBookProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$createBookHash();
+
+  @$internal
+  @override
+  $ProviderElement<CreateBook> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  CreateBook create(Ref ref) {
+    return createBook(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CreateBook value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CreateBook>(value),
+    );
+  }
+}
+
+String _$createBookHash() => r'564826854fe9d110eeb2cb5457cdfeb1ab37acf3';
+
+@ProviderFor(updateBook)
+final updateBookProvider = UpdateBookProvider._();
+
+final class UpdateBookProvider
+    extends $FunctionalProvider<UpdateBook, UpdateBook, UpdateBook>
+    with $Provider<UpdateBook> {
+  UpdateBookProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateBookProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateBookHash();
+
+  @$internal
+  @override
+  $ProviderElement<UpdateBook> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  UpdateBook create(Ref ref) {
+    return updateBook(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UpdateBook value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UpdateBook>(value),
+    );
+  }
+}
+
+String _$updateBookHash() => r'777eba62e4c01e2a0ca394d978a945ce1c5b62be';
+
+@ProviderFor(deleteBook)
+final deleteBookProvider = DeleteBookProvider._();
+
+final class DeleteBookProvider
+    extends $FunctionalProvider<DeleteBook, DeleteBook, DeleteBook>
+    with $Provider<DeleteBook> {
+  DeleteBookProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteBookProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteBookHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteBook> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  DeleteBook create(Ref ref) {
+    return deleteBook(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteBook value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteBook>(value),
+    );
+  }
+}
+
+String _$deleteBookHash() => r'fb03d9eefb8b93e1ec7c818fde35b50e5dd55fe7';
+
 @ProviderFor(books)
 final booksProvider = BooksProvider._();
 
@@ -282,4 +405,49 @@ final class BookFamily extends $Family
 
   @override
   String toString() => r'bookProvider';
+}
+
+@ProviderFor(AdminBookController)
+final adminBookControllerProvider = AdminBookControllerProvider._();
+
+final class AdminBookControllerProvider
+    extends $AsyncNotifierProvider<AdminBookController, void> {
+  AdminBookControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'adminBookControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$adminBookControllerHash();
+
+  @$internal
+  @override
+  AdminBookController create() => AdminBookController();
+}
+
+String _$adminBookControllerHash() =>
+    r'32407c38d75336901a895264737e4324272c092f';
+
+abstract class _$AdminBookController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
 }
