@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/entities/book.dart';
+import 'book_availability_pill.dart';
+import 'book_cover.dart';
 
 class BookListItem extends StatelessWidget {
   const BookListItem({required this.book, required this.onTap, super.key});
@@ -10,18 +12,51 @@ class BookListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAvailable = book.availableCopies > 0;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
 
-    return ListTile(
-      onTap: onTap,
-      title: Text(book.title),
-      subtitle: Text('${book.author}\nPublished ${book.publishedYear}'),
-      isThreeLine: true,
-      trailing: Text(
-        isAvailable ? '${book.availableCopies} available' : 'Unavailable',
-        style: TextStyle(
-          color: isAvailable ? Colors.green : Colors.red,
-          fontWeight: FontWeight.bold,
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              BookCover(
+                title: book.title,
+                author: book.author,
+                seed: book.id,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${book.author} · ${book.publishedYear}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    BookAvailabilityPill(book: book),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: colors.outline),
+            ],
+          ),
         ),
       ),
     );

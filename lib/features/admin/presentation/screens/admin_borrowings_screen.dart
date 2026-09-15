@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/error/failures.dart';
 import '../../../book/domain/entities/book.dart';
 import '../../../book/presentation/providers/book_providers.dart';
+import '../../../book/presentation/widgets/book_cover.dart';
 import '../../../borrowing/domain/entities/borrowing.dart';
 import '../../../borrowing/presentation/providers/borrowing_providers.dart';
+import '../../../borrowing/presentation/widgets/borrowing_status_pill.dart';
 import '../../../member/domain/entities/member.dart';
 import '../../../member/presentation/providers/member_providers.dart';
 
@@ -61,7 +63,7 @@ class AdminBorrowingsScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(16),
                       itemCount: borrowings.length,
                       separatorBuilder: (context, index) =>
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final borrowing = borrowings[index];
 
@@ -105,28 +107,88 @@ class _AdminBorrowingCard extends ConsumerWidget {
         borrowing.status.toLowerCase() != 'returned';
     final returnState = ref.watch(returnBookControllerProvider(borrowing.id));
 
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final title = book?.title ?? 'Book #${borrowing.bookId}';
+    final dateStyle = theme.textTheme.bodySmall?.copyWith(
+      color: colors.onSurfaceVariant,
+    );
+
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              book?.title ?? 'Book #${borrowing.bookId}',
-              style: Theme.of(context).textTheme.titleMedium,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                BookCover(
+                  title: title,
+                  author: book?.author,
+                  seed: borrowing.bookId,
+                  width: 44,
+                  height: 62,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.person_outline,
+                            size: 16,
+                            color: colors.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              member?.fullName ??
+                                  'Member #${borrowing.memberId}',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: colors.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Borrowed: ${_formatDate(borrowing.borrowedDate)}',
+                        style: dateStyle,
+                      ),
+                      Text(
+                        'Due: ${_formatDate(borrowing.dueDate)}',
+                        style: dateStyle,
+                      ),
+                      if (borrowing.returnedDate != null)
+                        Text(
+                          'Returned: ${_formatDate(borrowing.returnedDate!)}',
+                          style: dateStyle,
+                        ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 4),
-            Text(member?.fullName ?? 'Member #${borrowing.memberId}'),
-            const SizedBox(height: 8),
-            Text('Borrowed: ${_formatDate(borrowing.borrowedDate)}'),
-            Text('Due: ${_formatDate(borrowing.dueDate)}'),
-            if (borrowing.returnedDate != null)
-              Text('Returned: ${_formatDate(borrowing.returnedDate!)}'),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
+            const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Chip(label: Text(borrowing.status)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: BorrowingStatusPill(borrowing: borrowing),
+                ),
                 if (isActive)
                   TextButton(
                     onPressed: returnState.isLoading

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/error/failures.dart';
 import '../../../book/domain/entities/book.dart';
 import '../../../book/presentation/providers/book_providers.dart';
+import '../../../book/presentation/widgets/book_cover.dart';
 
 class AdminBooksScreen extends ConsumerWidget {
   const AdminBooksScreen({super.key});
@@ -63,14 +64,25 @@ class AdminBooksScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 96),
               itemCount: books.length,
               separatorBuilder: (context, index) {
-                return const SizedBox(height: 8);
+                return const SizedBox(height: 12);
               },
               itemBuilder: (context, index) {
                 final book = books[index];
 
                 return Card(
                   child: ListTile(
-                    title: Text(book.title),
+                    contentPadding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+                    leading: BookCover(
+                      title: book.title,
+                      author: book.author,
+                      seed: book.id,
+                      width: 40,
+                      height: 58,
+                    ),
+                    title: Text(
+                      book.title,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                     subtitle: Text(
                       '${book.author}\n'
                           'Available: ${book.availableCopies}/${book.totalCopies}',
@@ -99,11 +111,17 @@ class AdminBooksScreen extends ConsumerWidget {
                         return const [
                           PopupMenuItem(
                             value: 'edit',
-                            child: Text('Edit'),
+                            child: ListTile(
+                              leading: Icon(Icons.edit_outlined),
+                              title: Text('Edit'),
+                            ),
                           ),
                           PopupMenuItem(
                             value: 'delete',
-                            child: Text('Delete'),
+                            child: ListTile(
+                              leading: Icon(Icons.delete_outline),
+                              title: Text('Delete'),
+                            ),
                           ),
                         ];
                       },
@@ -206,6 +224,9 @@ class AdminBooksScreen extends ConsumerWidget {
               onPressed: () {
                 Navigator.pop(dialogContext, true);
               },
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(dialogContext).colorScheme.error,
+              ),
               child: const Text('Delete'),
             ),
           ],
@@ -329,6 +350,7 @@ class _BookFormDialogState extends State<BookFormDialog> {
                   ),
                   validator: _requiredText,
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: authorController,
                   decoration: const InputDecoration(
@@ -336,6 +358,7 @@ class _BookFormDialogState extends State<BookFormDialog> {
                   ),
                   validator: _requiredText,
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: isbnController,
                   decoration: const InputDecoration(
@@ -343,6 +366,7 @@ class _BookFormDialogState extends State<BookFormDialog> {
                   ),
                   validator: _requiredText,
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: yearController,
                   keyboardType: TextInputType.number,
@@ -351,6 +375,7 @@ class _BookFormDialogState extends State<BookFormDialog> {
                   ),
                   validator: _positiveNumber,
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: copiesController,
                   keyboardType: TextInputType.number,

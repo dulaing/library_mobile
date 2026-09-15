@@ -9,6 +9,8 @@ import '../../../borrowing/domain/entities/borrowing.dart';
 import '../../../borrowing/presentation/providers/borrowing_providers.dart';
 import '../../domain/entities/book.dart';
 import '../providers/book_providers.dart';
+import '../widgets/book_availability_pill.dart';
+import '../widgets/book_cover.dart';
 
 class BookDetailsScreen extends ConsumerWidget {
   const BookDetailsScreen({required this.book, super.key});
@@ -23,46 +25,86 @@ class BookDetailsScreen extends ConsumerWidget {
     final borrowError = borrowState.error;
     final errorMessage = borrowError is Failure ? borrowError.message : null;
 
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Book Details')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
         children: [
-          Text(book.title, style: Theme.of(context).textTheme.headlineMedium),
-          const SizedBox(height: 8),
-          Text(book.author, style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 24),
-          ListTile(
-            leading: const Icon(Icons.numbers),
-            title: const Text('ISBN'),
-            subtitle: Text(book.isbn),
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_today),
-            title: const Text('Published year'),
-            subtitle: Text(book.publishedYear.toString()),
-          ),
-          ListTile(
-            leading: const Icon(Icons.inventory_2),
-            title: const Text('Total copies'),
-            subtitle: Text(book.totalCopies.toString()),
-          ),
-          ListTile(
-            leading: const Icon(Icons.library_books),
-            title: const Text('Available copies'),
-            subtitle: Text(book.availableCopies.toString()),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            isAvailable
-                ? 'This book is available.'
-                : 'This book is currently unavailable.',
-            style: TextStyle(
-              color: isAvailable ? Colors.green : Colors.red,
-              fontWeight: FontWeight.bold,
+          Center(
+            child: BookCover(
+              title: book.title,
+              author: book.author,
+              seed: book.id,
+              width: 132,
+              height: 188,
             ),
           ),
           const SizedBox(height: 24),
+          Text(
+            book.title,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.headlineMedium,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            book.author,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Center(child: BookAvailabilityPill(book: book)),
+          const SizedBox(height: 28),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _DetailTile(
+                          icon: Icons.numbers,
+                          label: 'ISBN',
+                          value: book.isbn,
+                        ),
+                      ),
+                      Expanded(
+                        child: _DetailTile(
+                          icon: Icons.calendar_today_outlined,
+                          label: 'Published year',
+                          value: book.publishedYear.toString(),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _DetailTile(
+                          icon: Icons.inventory_2_outlined,
+                          label: 'Total copies',
+                          value: book.totalCopies.toString(),
+                        ),
+                      ),
+                      Expanded(
+                        child: _DetailTile(
+                          icon: Icons.library_books_outlined,
+                          label: 'Available copies',
+                          value: book.availableCopies.toString(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 28),
           FilledButton.icon(
             onPressed: isAvailable && memberId != null && !borrowState.isLoading
                 ? () => confirmAndBorrow(
@@ -216,6 +258,62 @@ class BookDetailsScreen extends ConsumerWidget {
     );
 
     return result ?? false;
+  }
+}
+
+class _DetailTile extends StatelessWidget {
+  const _DetailTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colors.primaryContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 18, color: colors.onPrimaryContainer),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

@@ -40,7 +40,7 @@ class _BooksScreenState extends ConsumerState<BooksScreen> {
               children: [
                 Text(message),
                 const SizedBox(height: 12),
-                ElevatedButton(
+                FilledButton(
                   onPressed: () {
                     ref.invalidate(booksProvider);
                   },
@@ -60,20 +60,29 @@ class _BooksScreenState extends ConsumerState<BooksScreen> {
           }).toList();
 
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                 child: TextField(
                   decoration: const InputDecoration(
                     hintText: 'Search by title, author, or ISBN',
                     prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(),
                   ),
                   onChanged: (value) {
                     setState(() {
                       searchText = value;
                     });
                   },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                child: Text(
+                  '${filteredBooks.length} of ${books.length} books',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               Expanded(
@@ -85,6 +94,7 @@ class _BooksScreenState extends ConsumerState<BooksScreen> {
                         },
                         child: ListView.separated(
                           physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                           itemCount: filteredBooks.length,
                           itemBuilder: (context, index) {
                             final book = filteredBooks[index];
@@ -102,7 +112,7 @@ class _BooksScreenState extends ConsumerState<BooksScreen> {
                             );
                           },
                           separatorBuilder: (context, index) {
-                            return const Divider(height: 1);
+                            return const SizedBox(height: 12);
                           },
                         ),
                       ),

@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/borrowing.dart';
 import '../providers/borrowing_providers.dart';
+import '../widgets/borrowing_status_pill.dart';
 
 import '../../../book/domain/entities/book.dart';
 import '../../../book/presentation/providers/book_providers.dart';
+import '../../../book/presentation/widgets/book_cover.dart';
 
 class MyBorrowingsScreen extends ConsumerWidget {
   const MyBorrowingsScreen({
@@ -116,6 +118,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
                 },
                 child: ListView.separated(
                   physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                   itemCount: borrowings.length,
                   itemBuilder: (context, index) {
                     final borrowing = borrowings[index];
@@ -127,7 +130,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
                     );
                   },
                   separatorBuilder: (context, index) {
-                    return const Divider(height: 1);
+                    return const SizedBox(height: 12);
                   },
                 ),
               );
@@ -159,72 +162,84 @@ class BorrowingListItem extends ConsumerWidget {
         borrowing.status.toLowerCase() != 'returned';
     final returnState = ref.watch(returnBookControllerProvider(borrowing.id));
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 10,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 4),
-            child: Icon(Icons.book_outlined),
-          ),
-          const SizedBox(width: 12),
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final title = currentBook?.title ?? 'Book #${borrowing.bookId}';
 
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  currentBook?.title ?? 'Book #${borrowing.bookId}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                if (currentBook != null) ...[
-                  const SizedBox(height: 3),
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            BookCover(
+              title: title,
+              author: currentBook?.author,
+              seed: borrowing.bookId,
+              width: 48,
+              height: 68,
+            ),
+            const SizedBox(width: 14),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    currentBook.author,
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (currentBook != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      currentBook.author,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  _DateLine(
+                    icon: Icons.event_available_outlined,
+                    text: 'Borrowed: ${formatDate(borrowing.borrowedDate)}',
+                  ),
+                  const SizedBox(height: 2),
+                  _DateLine(
+                    icon: Icons.event_outlined,
+                    text: 'Due: ${formatDate(borrowing.dueDate)}',
                   ),
                 ],
-                const SizedBox(height: 6),
-                Text(
-                  'Borrowed: ${formatDate(borrowing.borrowedDate)}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                Text(
-                  'Due: ${formatDate(borrowing.dueDate)}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+              ),
+            ),
+
+            const SizedBox(width: 8),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                BorrowingStatusPill(borrowing: borrowing),
+                if (isActive) ...[
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: returnState.isLoading
+                        ? null
+                        : () => confirmAndReturn(context, ref),
+                    style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                    ),
+                    child: Text(
+                      returnState.isLoading ? 'Returning...' : 'Return',
+                    ),
+                  ),
+                ],
               ],
             ),
-          ),
-
-          const SizedBox(width: 8),
-
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Chip(
-                label: Text(borrowing.status),
-                visualDensity: VisualDensity.compact,
-              ),
-              if (isActive)
-                TextButton(
-                  onPressed: returnState.isLoading
-                      ? null
-                      : () => confirmAndReturn(context, ref),
-                  style: TextButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  child: Text(
-                    returnState.isLoading ? 'Returning...' : 'Return',
-                  ),
-                ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -279,6 +294,27 @@ class BorrowingListItem extends ConsumerWidget {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Book returned successfully.')),
+    );
+  }
+}
+
+class _DateLine extends StatelessWidget {
+  const _DateLine({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurfaceVariant;
+
+    return Row(
+      children: [
+        Icon(icon, size: 14, color: color),
+        const SizedBox(width: 6),
+        Text(text, style: theme.textTheme.bodySmall?.copyWith(color: color)),
+      ],
     );
   }
 }

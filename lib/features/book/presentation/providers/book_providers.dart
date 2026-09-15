@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../../data/datasources/book_cover_remote_data_source.dart';
 import '../../data/datasources/book_remote_data_source.dart';
 import '../../data/repositories/book_repository_impl.dart';
 import '../../domain/entities/book.dart';
@@ -24,6 +26,27 @@ BookRemoteDataSource bookRemoteDataSource(Ref ref) {
   final dio = ref.watch(apiClientProvider);
 
   return BookRemoteDataSourceImpl(dio);
+}
+
+@Riverpod(keepAlive: true)
+BookCoverRemoteDataSource bookCoverRemoteDataSource(Ref ref) {
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://openlibrary.org',
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    ),
+  );
+
+  return BookCoverRemoteDataSource(dio);
+}
+
+// Kept alive so each title is only looked up once per session.
+@Riverpod(keepAlive: true, retry: noRetry)
+Future<int?> bookCoverId(Ref ref, String title, String? author) {
+  final dataSource = ref.watch(bookCoverRemoteDataSourceProvider);
+
+  return dataSource.findCoverId(title: title, author: author);
 }
 
 @riverpod

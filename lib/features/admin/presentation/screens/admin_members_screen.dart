@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/status_pill.dart';
 import '../../../borrowing/presentation/screens/my_borrowings_screen.dart';
 import '../../../member/domain/entities/member.dart';
 import '../../../member/presentation/providers/member_providers.dart';
@@ -67,25 +69,48 @@ class AdminMembersScreen extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               itemCount: members.length,
               separatorBuilder: (context, index) {
-                return const SizedBox(height: 8);
+                return const SizedBox(height: 12);
               },
               itemBuilder: (context, index) {
                 final member = members[index];
+                final colors = Theme.of(context).colorScheme;
 
                 return Card(
                   child: ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
                     leading: CircleAvatar(
+                      backgroundColor: colors.primaryContainer,
+                      foregroundColor: colors.onPrimaryContainer,
                       child: Text(
                         member.fullName.isEmpty
                             ? '?'
                             : member.fullName[0].toUpperCase(),
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
-                    title: Text(member.fullName),
+                    title: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            member.fullName,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        StatusPill(
+                          label: member.isActive ? 'Active' : 'Inactive',
+                          color: member.isActive
+                              ? colors.success
+                              : colors.outline,
+                        ),
+                      ],
+                    ),
                     subtitle: Text(
                       '${member.email}\n'
-                          '${member.phoneNumber ?? 'No phone number'}\n'
-                          '${member.isActive ? 'Active' : 'Inactive'}',
+                          '${member.phoneNumber ?? 'No phone number'}',
                     ),
                     isThreeLine: true,
                     trailing: PopupMenuButton<MemberAction>(
@@ -102,15 +127,15 @@ class AdminMembersScreen extends ConsumerWidget {
                         }
                       },
                       itemBuilder: (context) {
-                        return const [
-                          PopupMenuItem(
+                        return [
+                          const PopupMenuItem(
                             value: MemberAction.edit,
                             child: ListTile(
                               leading: Icon(Icons.edit_outlined),
                               title: Text('Edit'),
                             ),
                           ),
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: MemberAction.borrowings,
                             child: ListTile(
                               leading: Icon(Icons.history),
@@ -122,9 +147,9 @@ class AdminMembersScreen extends ConsumerWidget {
                             child: ListTile(
                               leading: Icon(
                                 Icons.delete_outline,
-                                color: Colors.red,
+                                color: colors.error,
                               ),
-                              title: Text('Delete'),
+                              title: const Text('Delete'),
                             ),
                           ),
                         ];
@@ -266,7 +291,7 @@ class AdminMembersScreen extends ConsumerWidget {
                 Navigator.pop(dialogContext, true);
               },
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Theme.of(dialogContext).colorScheme.error,
               ),
               child: const Text('Delete'),
             ),
@@ -419,6 +444,7 @@ class _EditMemberDialogState extends State<EditMemberDialog> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -433,6 +459,7 @@ class _EditMemberDialogState extends State<EditMemberDialog> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
@@ -559,6 +586,7 @@ class _CreateMemberDialogState extends State<CreateMemberDialog> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -573,6 +601,7 @@ class _CreateMemberDialogState extends State<CreateMemberDialog> {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
@@ -580,6 +609,7 @@ class _CreateMemberDialogState extends State<CreateMemberDialog> {
                     labelText: 'Phone number',
                   ),
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: passwordController,
                   obscureText: hidePassword,
@@ -622,6 +652,7 @@ class _CreateMemberDialogState extends State<CreateMemberDialog> {
                       return null;
                     }
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: confirmPasswordController,
                   obscureText: true,
