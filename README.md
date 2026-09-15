@@ -1,17 +1,13 @@
-# library_mobile
+# Library Mobile App: Known Limitations
 
-A new Flutter project.
+## Missing functionality
 
-## Getting Started
+- Password changing is not available because the backend does not provide a password-change endpoint.
+- Members cannot register themselves. An administrator must create each member and their login account.
+- Creating a member and creating their login account are two separate backend requests. If the second request fails, the member may exist without a login account.
 
-This project is a starting point for a Flutter application.
+## UI scope
 
-A few resources to get you started if this is your first Flutter project:
+UI design was not the main focus of the `main` branch. It contains the manually implemented, working components with a simple interface and without extensive visual polish.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The `ui-design` branch is used separately for experimenting with and expanding the visual design.
