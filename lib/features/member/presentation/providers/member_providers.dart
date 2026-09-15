@@ -8,6 +8,7 @@ import '../../data/repositories/member_repository_impl.dart';
 import '../../domain/entities/member.dart';
 import '../../domain/repositories/member_repository.dart';
 import '../../domain/usecases/create_member_account.dart';
+import '../../domain/usecases/delete_member.dart';
 import '../../domain/usecases/get_member.dart';
 import '../../domain/usecases/get_members.dart';
 import '../../domain/usecases/update_member.dart';
@@ -44,6 +45,13 @@ GetMembers getMembers(Ref ref) {
 @riverpod
 CreateMemberAccount createMemberAccount(Ref ref) {
   return CreateMemberAccount(
+    ref.watch(memberRepositoryProvider),
+  );
+}
+
+@riverpod
+DeleteMember deleteMember(Ref ref) {
+  return DeleteMember(
     ref.watch(memberRepositoryProvider),
   );
 }
@@ -131,6 +139,31 @@ class CreateMemberAccountController
         ref.invalidate(membersProvider);
         state = const AsyncData(null);
         return member;
+      },
+    );
+  }
+}
+
+@riverpod
+class DeleteMemberController extends _$DeleteMemberController {
+  @override
+  FutureOr<void> build() {}
+
+  Future<bool> submit(int memberId) async {
+    state = const AsyncLoading();
+
+    final result = await ref.read(deleteMemberProvider)(memberId);
+
+    return result.fold(
+          (failure) {
+        state = AsyncError(failure, StackTrace.current);
+        return false;
+      },
+          (deleted) {
+        ref.invalidate(membersProvider);
+        ref.invalidate(memberProfileProvider(memberId));
+        state = const AsyncData(null);
+        return deleted;
       },
     );
   }

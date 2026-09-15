@@ -22,6 +22,8 @@ abstract class MemberRemoteDataSource {
     required String? phoneNumber,
     required String password,
   });
+
+  Future<void> deleteMember(int memberId);
 }
 
 class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
@@ -122,6 +124,15 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
       );
 
       return member;
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
+  @override
+  Future<void> deleteMember(int memberId) async {
+    try {
+      await dio.delete('/api/members/$memberId');
     } on DioException catch (error) {
       throw ApiException.fromDio(error);
     }

@@ -96,6 +96,9 @@ class AdminMembersScreen extends ConsumerWidget {
 
                           case MemberAction.borrowings:
                             _viewBorrowings(context, member);
+
+                          case MemberAction.delete:
+                            _deleteMember(context, ref, member);
                         }
                       },
                       itemBuilder: (context) {
@@ -112,6 +115,16 @@ class AdminMembersScreen extends ConsumerWidget {
                             child: ListTile(
                               leading: Icon(Icons.history),
                               title: Text('View borrowings'),
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: MemberAction.delete,
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                              ),
+                              title: Text('Delete'),
                             ),
                           ),
                         ];
@@ -228,6 +241,77 @@ class AdminMembersScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _deleteMember(
+      BuildContext context,
+      WidgetRef ref,
+      Member member,
+      ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete member'),
+          content: Text(
+            'Permanently delete "${member.fullName}"?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, false);
+              },
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(dialogContext, true);
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !context.mounted) {
+      return;
+    }
+
+    final deleted = await ref
+        .read(deleteMemberControllerProvider.notifier)
+        .submit(member.id);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (!deleted) {
+      final error = ref
+          .read(deleteMemberControllerProvider)
+          .error;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_errorMessage(error))),
+      );
+
+      return;
+    }
+
+    await ref.refresh(membersProvider.future);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Member deleted.'),
+      ),
+    );
+  }
+
   void _viewBorrowings(
       BuildContext context,
       Member member,
@@ -256,6 +340,7 @@ class AdminMembersScreen extends ConsumerWidget {
 enum MemberAction {
   edit,
   borrowings,
+  delete,
 }
 
 class EditMemberDialog extends StatefulWidget {

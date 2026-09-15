@@ -5,6 +5,8 @@ import '../entities/member.dart';
 
 abstract class MemberRepository {
   Future<Either<Failure, Member>> getMember(int memberId);
+  Future<Either<Failure, List<Member>>> getMembers();
+  Future<Either<Failure, bool>> deleteMember(int memberId);
 
   Future<Either<Failure, Member>> updateMember({
     required int memberId,
@@ -13,8 +15,6 @@ abstract class MemberRepository {
     required String? phoneNumber,
     required bool isActive,
   });
-
-  Future<Either<Failure, List<Member>>> getMembers();
 
   Future<Either<Failure, Member>> createMemberAccount({
     required String fullName,

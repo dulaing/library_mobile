@@ -274,6 +274,47 @@ final class CreateMemberAccountProvider
 String _$createMemberAccountHash() =>
     r'c90dbe2a14bd2ac3c2be84b350dca213bfe47b51';
 
+@ProviderFor(deleteMember)
+final deleteMemberProvider = DeleteMemberProvider._();
+
+final class DeleteMemberProvider
+    extends $FunctionalProvider<DeleteMember, DeleteMember, DeleteMember>
+    with $Provider<DeleteMember> {
+  DeleteMemberProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteMemberProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteMemberHash();
+
+  @$internal
+  @override
+  $ProviderElement<DeleteMember> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  DeleteMember create(Ref ref) {
+    return deleteMember(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DeleteMember value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DeleteMember>(value),
+    );
+  }
+}
+
+String _$deleteMemberHash() => r'addc9eb5c4807afe8428c952a7ab3e5874d43052';
+
 @ProviderFor(members)
 final membersProvider = MembersProvider._();
 
@@ -502,6 +543,51 @@ String _$createMemberAccountControllerHash() =>
     r'3bdca49f0c9cd1c1927ec56db19a599da0abb7c3';
 
 abstract class _$CreateMemberAccountController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(DeleteMemberController)
+final deleteMemberControllerProvider = DeleteMemberControllerProvider._();
+
+final class DeleteMemberControllerProvider
+    extends $AsyncNotifierProvider<DeleteMemberController, void> {
+  DeleteMemberControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteMemberControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteMemberControllerHash();
+
+  @$internal
+  @override
+  DeleteMemberController create() => DeleteMemberController();
+}
+
+String _$deleteMemberControllerHash() =>
+    r'7b7cdf823e4671a1886b3651c40c994213e57d47';
+
+abstract class _$DeleteMemberController extends $AsyncNotifier<void> {
   FutureOr<void> build();
   @$mustCallSuper
   @override

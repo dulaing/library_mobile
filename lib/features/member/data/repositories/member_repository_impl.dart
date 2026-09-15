@@ -86,4 +86,19 @@ class MemberRepositoryImpl implements MemberRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> deleteMember(int memberId) async {
+    try {
+      await dataSource.deleteMember(memberId);
+
+      return const Right(true);
+    } on ApiException catch (error) {
+      return Left(MemberFailure(error.message));
+    } catch (_) {
+      return const Left(
+        MemberFailure('Could not delete the member.'),
+      );
+    }
+  }
 }
