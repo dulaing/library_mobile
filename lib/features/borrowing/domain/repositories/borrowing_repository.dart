@@ -4,6 +4,8 @@ import '../../../../core/error/failures.dart';
 import '../entities/borrowing.dart';
 
 abstract class BorrowingRepository {
+  Future<Either<Failure, List<Borrowing>>> getBorrowings();
+
   Future<Either<Failure, List<Borrowing>>> getMemberBorrowings(int memberId);
 
   Future<Either<Failure, Borrowing>> borrowBook({

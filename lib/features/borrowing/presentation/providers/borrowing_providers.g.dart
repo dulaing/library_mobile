@@ -153,6 +153,47 @@ final class GetMemberBorrowingsProvider
 String _$getMemberBorrowingsHash() =>
     r'a53fc75f38b3b0c15106651a0bfc45f081c51086';
 
+@ProviderFor(getBorrowings)
+final getBorrowingsProvider = GetBorrowingsProvider._();
+
+final class GetBorrowingsProvider
+    extends $FunctionalProvider<GetBorrowings, GetBorrowings, GetBorrowings>
+    with $Provider<GetBorrowings> {
+  GetBorrowingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getBorrowingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getBorrowingsHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetBorrowings> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GetBorrowings create(Ref ref) {
+    return getBorrowings(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetBorrowings value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetBorrowings>(value),
+    );
+  }
+}
+
+String _$getBorrowingsHash() => r'88fbab5227fc839419c78508959fabd4fc04cde2';
+
 @ProviderFor(borrowBook)
 final borrowBookProvider = BorrowBookProvider._();
 
@@ -236,7 +277,7 @@ final class BorrowBookControllerProvider
 }
 
 String _$borrowBookControllerHash() =>
-    r'4bf46f60d7d9420a17396228870a67a8be39b6be';
+    r'2e700b58f03de9a88052b143812cfd151e2ce912';
 
 final class BorrowBookControllerFamily extends $Family
     with
@@ -367,7 +408,7 @@ final class ReturnBookControllerProvider
 }
 
 String _$returnBookControllerHash() =>
-    r'3a13c228fe228fb2c972908fc7bd52c851a6123a';
+    r'a3b2abfdea859b26f5f9183da81d68dcdfa32782';
 
 final class ReturnBookControllerFamily extends $Family
     with
@@ -414,6 +455,45 @@ abstract class _$ReturnBookController extends $AsyncNotifier<void> {
     return element.handleCreate(ref, () => build(_$args));
   }
 }
+
+@ProviderFor(allBorrowings)
+final allBorrowingsProvider = AllBorrowingsProvider._();
+
+final class AllBorrowingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Borrowing>>,
+          List<Borrowing>,
+          FutureOr<List<Borrowing>>
+        >
+    with $FutureModifier<List<Borrowing>>, $FutureProvider<List<Borrowing>> {
+  AllBorrowingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: noBorrowingRetry,
+        name: r'allBorrowingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$allBorrowingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Borrowing>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Borrowing>> create(Ref ref) {
+    return allBorrowings(ref);
+  }
+}
+
+String _$allBorrowingsHash() => r'9078dfdcade2bdd3e3ead1ff990f601a7e62ce09';
 
 @ProviderFor(memberBorrowings)
 final memberBorrowingsProvider = MemberBorrowingsFamily._();

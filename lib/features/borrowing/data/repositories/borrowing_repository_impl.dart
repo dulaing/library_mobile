@@ -12,6 +12,19 @@ class BorrowingRepositoryImpl implements BorrowingRepository {
   final BorrowingRemoteDataSource dataSource;
 
   @override
+  Future<Either<Failure, List<Borrowing>>> getBorrowings() async {
+    try {
+      final borrowings = await dataSource.getBorrowings();
+
+      return Right(borrowings);
+    } on ApiException catch (error) {
+      return Left(BorrowingFailure(error.message));
+    } catch (_) {
+      return const Left(BorrowingFailure('Could not load borrowings.'));
+    }
+  }
+
+  @override
   Future<Either<Failure, List<Borrowing>>> getMemberBorrowings(
     int memberId,
   ) async {

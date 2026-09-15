@@ -8,6 +8,7 @@ import '../../data/repositories/borrowing_repository_impl.dart';
 import '../../domain/entities/borrowing.dart';
 import '../../domain/repositories/borrowing_repository.dart';
 import '../../domain/usecases/borrow_book.dart';
+import '../../domain/usecases/get_borrowings.dart';
 import '../../domain/usecases/get_member_borrowings.dart';
 import '../../domain/usecases/return_book.dart';
 
@@ -35,6 +36,11 @@ GetMemberBorrowings getMemberBorrowings(Ref ref) {
 }
 
 @riverpod
+GetBorrowings getBorrowings(Ref ref) {
+  return GetBorrowings(ref.watch(borrowingRepositoryProvider));
+}
+
+@riverpod
 BorrowBook borrowBook(Ref ref) {
   final repository = ref.watch(borrowingRepositoryProvider);
 
@@ -59,6 +65,7 @@ class BorrowBookController extends _$BorrowBookController {
       },
       (borrowing) {
         ref.invalidate(memberBorrowingsProvider(memberId));
+        ref.invalidate(allBorrowingsProvider);
         state = const AsyncData(null);
         return borrowing;
       },
@@ -91,11 +98,19 @@ class ReturnBookController extends _$ReturnBookController {
       },
       (borrowing) {
         ref.invalidate(memberBorrowingsProvider(memberId));
+        ref.invalidate(allBorrowingsProvider);
         state = const AsyncData(null);
         return borrowing;
       },
     );
   }
+}
+
+@Riverpod(retry: noBorrowingRetry)
+Future<List<Borrowing>> allBorrowings(Ref ref) async {
+  final result = await ref.watch(getBorrowingsProvider)();
+
+  return result.fold((failure) => throw failure, (borrowings) => borrowings);
 }
 
 @Riverpod(retry: noBorrowingRetry)
