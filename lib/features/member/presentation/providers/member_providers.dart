@@ -8,6 +8,7 @@ import '../../data/repositories/member_repository_impl.dart';
 import '../../domain/entities/member.dart';
 import '../../domain/repositories/member_repository.dart';
 import '../../domain/usecases/get_member.dart';
+import '../../domain/usecases/get_members.dart';
 import '../../domain/usecases/update_member.dart';
 
 part 'member_providers.g.dart';
@@ -30,6 +31,24 @@ GetMember getMember(Ref ref) {
 @riverpod
 UpdateMember updateMember(Ref ref) {
   return UpdateMember(ref.watch(memberRepositoryProvider));
+}
+
+@riverpod
+GetMembers getMembers(Ref ref) {
+  return GetMembers(
+    ref.watch(memberRepositoryProvider),
+  );
+}
+
+@Riverpod(retry: noMemberRetry)
+Future<List<Member>> members(Ref ref) async {
+  final getMembers = ref.watch(getMembersProvider);
+  final result = await getMembers();
+
+  return result.fold(
+        (failure) => throw failure,
+        (members) => members,
+  );
 }
 
 @Riverpod(retry: noMemberRetry)

@@ -46,4 +46,19 @@ class MemberRepositoryImpl implements MemberRepository {
       return const Left(MemberFailure('Could not update your profile.'));
     }
   }
+
+  @override
+  Future<Either<Failure, List<Member>>> getMembers() async {
+    try {
+      final members = await dataSource.getMembers();
+
+      return Right(members);
+    } on ApiException catch (error) {
+      return Left(MemberFailure(error.message));
+    } catch (_) {
+      return const Left(
+        MemberFailure('Could not load members.'),
+      );
+    }
+  }
 }

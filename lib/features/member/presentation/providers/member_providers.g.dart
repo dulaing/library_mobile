@@ -185,6 +185,86 @@ final class UpdateMemberProvider
 
 String _$updateMemberHash() => r'de6edfa97e6b049a2889c2cc4b298d29924b57ef';
 
+@ProviderFor(getMembers)
+final getMembersProvider = GetMembersProvider._();
+
+final class GetMembersProvider
+    extends $FunctionalProvider<GetMembers, GetMembers, GetMembers>
+    with $Provider<GetMembers> {
+  GetMembersProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getMembersProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getMembersHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetMembers> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GetMembers create(Ref ref) {
+    return getMembers(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetMembers value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetMembers>(value),
+    );
+  }
+}
+
+String _$getMembersHash() => r'3f9ce761d1330cebcbd332a7b6c99815cf9d251f';
+
+@ProviderFor(members)
+final membersProvider = MembersProvider._();
+
+final class MembersProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<Member>>,
+          List<Member>,
+          FutureOr<List<Member>>
+        >
+    with $FutureModifier<List<Member>>, $FutureProvider<List<Member>> {
+  MembersProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: noMemberRetry,
+        name: r'membersProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$membersHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<Member>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<Member>> create(Ref ref) {
+    return members(ref);
+  }
+}
+
+String _$membersHash() => r'5e08e725a96b0407208a1a9474f8ae24930d7aee';
+
 @ProviderFor(memberProfile)
 final memberProfileProvider = MemberProfileFamily._();
 

@@ -13,6 +13,8 @@ abstract class MemberRemoteDataSource {
     required String? phoneNumber,
     required bool isActive,
   });
+
+  Future<List<MemberModel>> getMembers();
 }
 
 class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
@@ -50,6 +52,34 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
       );
 
       return memberFromResponse(response.data);
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
+  @override
+  Future<List<MemberModel>> getMembers() async {
+    try {
+      final response = await dio.get('/api/members');
+      final responseData = response.data;
+
+      if (responseData is! List) {
+        throw const ApiException(
+          'The server returned an invalid member list.',
+        );
+      }
+
+      return responseData.map((item) {
+        if (item is! Map) {
+          throw const ApiException(
+            'The server returned invalid member data.',
+          );
+        }
+
+        return MemberModel.fromJson(
+          Map<String, dynamic>.from(item),
+        );
+      }).toList();
     } on DioException catch (error) {
       throw ApiException.fromDio(error);
     }

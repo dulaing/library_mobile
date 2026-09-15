@@ -13,4 +13,6 @@ abstract class MemberRepository {
     required String? phoneNumber,
     required bool isActive,
   });
+
+  Future<Either<Failure, List<Member>>> getMembers();
 }
