@@ -9,9 +9,14 @@ import '../../../book/domain/entities/book.dart';
 import '../../../book/presentation/providers/book_providers.dart';
 
 class MyBorrowingsScreen extends ConsumerWidget {
-  const MyBorrowingsScreen({this.memberId, super.key});
+  const MyBorrowingsScreen({
+    this.memberId,
+    this.title = 'My Borrowings',
+    super.key,
+  });
 
   final int? memberId;
+  final String title;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,7 +24,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
 
     if (currentMemberId == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('My Borrowings')),
+        appBar: AppBar(title: Text(title)),
         body: const Center(child: Text('Sign in to view your borrowings.')),
       );
     }
@@ -31,7 +36,7 @@ class MyBorrowingsScreen extends ConsumerWidget {
     final booksResult = ref.watch(booksProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My Borrowings')),
+      appBar: AppBar(title: Text(title)),
       body: borrowingsResult.when(
         loading: () {
           return const Center(child: CircularProgressIndicator());
