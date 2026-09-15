@@ -15,4 +15,11 @@ abstract class MemberRepository {
   });
 
   Future<Either<Failure, List<Member>>> getMembers();
+
+  Future<Either<Failure, Member>> createMemberAccount({
+    required String fullName,
+    required String email,
+    required String? phoneNumber,
+    required String password,
+  });
 }

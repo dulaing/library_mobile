@@ -15,6 +15,13 @@ abstract class MemberRemoteDataSource {
   });
 
   Future<List<MemberModel>> getMembers();
+
+  Future<MemberModel> createMemberAccount({
+    required String fullName,
+    required String email,
+    required String? phoneNumber,
+    required String password,
+  });
 }
 
 class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
@@ -80,6 +87,41 @@ class MemberRemoteDataSourceImpl implements MemberRemoteDataSource {
           Map<String, dynamic>.from(item),
         );
       }).toList();
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+  }
+
+  @override
+  Future<MemberModel> createMemberAccount({
+    required String fullName,
+    required String email,
+    required String? phoneNumber,
+    required String password,
+  }) async {
+    try {
+      final memberResponse = await dio.post(
+        '/api/members',
+        data: {
+          'fullName': fullName,
+          'email': email,
+          'phoneNumber': phoneNumber,
+        },
+      );
+
+      final member = memberFromResponse(memberResponse.data);
+
+      await dio.post(
+        '/api/users',
+        data: {
+          'email': email,
+          'password': password,
+          'role': 'Member',
+          'memberId': member.id,
+        },
+      );
+
+      return member;
     } on DioException catch (error) {
       throw ApiException.fromDio(error);
     }

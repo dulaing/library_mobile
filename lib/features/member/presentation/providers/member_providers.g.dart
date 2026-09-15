@@ -226,6 +226,54 @@ final class GetMembersProvider
 
 String _$getMembersHash() => r'3f9ce761d1330cebcbd332a7b6c99815cf9d251f';
 
+@ProviderFor(createMemberAccount)
+final createMemberAccountProvider = CreateMemberAccountProvider._();
+
+final class CreateMemberAccountProvider
+    extends
+        $FunctionalProvider<
+          CreateMemberAccount,
+          CreateMemberAccount,
+          CreateMemberAccount
+        >
+    with $Provider<CreateMemberAccount> {
+  CreateMemberAccountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'createMemberAccountProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$createMemberAccountHash();
+
+  @$internal
+  @override
+  $ProviderElement<CreateMemberAccount> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  CreateMemberAccount create(Ref ref) {
+    return createMemberAccount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CreateMemberAccount value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CreateMemberAccount>(value),
+    );
+  }
+}
+
+String _$createMemberAccountHash() =>
+    r'c90dbe2a14bd2ac3c2be84b350dca213bfe47b51';
+
 @ProviderFor(members)
 final membersProvider = MembersProvider._();
 
@@ -422,5 +470,51 @@ abstract class _$MemberProfileController extends $AsyncNotifier<void> {
               Object?
             >;
     return element.handleCreate(ref, () => build(_$args));
+  }
+}
+
+@ProviderFor(CreateMemberAccountController)
+final createMemberAccountControllerProvider =
+    CreateMemberAccountControllerProvider._();
+
+final class CreateMemberAccountControllerProvider
+    extends $AsyncNotifierProvider<CreateMemberAccountController, void> {
+  CreateMemberAccountControllerProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'createMemberAccountControllerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$createMemberAccountControllerHash();
+
+  @$internal
+  @override
+  CreateMemberAccountController create() => CreateMemberAccountController();
+}
+
+String _$createMemberAccountControllerHash() =>
+    r'3bdca49f0c9cd1c1927ec56db19a599da0abb7c3';
+
+abstract class _$CreateMemberAccountController extends $AsyncNotifier<void> {
+  FutureOr<void> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<void>, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<void>, void>,
+              AsyncValue<void>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
   }
 }

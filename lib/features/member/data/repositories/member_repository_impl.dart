@@ -61,4 +61,29 @@ class MemberRepositoryImpl implements MemberRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, Member>> createMemberAccount({
+    required String fullName,
+    required String email,
+    required String? phoneNumber,
+    required String password,
+  }) async {
+    try {
+      final member = await dataSource.createMemberAccount(
+        fullName: fullName,
+        email: email,
+        phoneNumber: phoneNumber,
+        password: password,
+      );
+
+      return Right(member);
+    } on ApiException catch (error) {
+      return Left(MemberFailure(error.message));
+    } catch (_) {
+      return const Left(
+        MemberFailure('Could not create the member account.'),
+      );
+    }
+  }
 }

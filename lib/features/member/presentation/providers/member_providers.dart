@@ -7,6 +7,7 @@ import '../../data/datasources/member_remote_data_source.dart';
 import '../../data/repositories/member_repository_impl.dart';
 import '../../domain/entities/member.dart';
 import '../../domain/repositories/member_repository.dart';
+import '../../domain/usecases/create_member_account.dart';
 import '../../domain/usecases/get_member.dart';
 import '../../domain/usecases/get_members.dart';
 import '../../domain/usecases/update_member.dart';
@@ -36,6 +37,13 @@ UpdateMember updateMember(Ref ref) {
 @riverpod
 GetMembers getMembers(Ref ref) {
   return GetMembers(
+    ref.watch(memberRepositoryProvider),
+  );
+}
+
+@riverpod
+CreateMemberAccount createMemberAccount(Ref ref) {
+  return CreateMemberAccount(
     ref.watch(memberRepositoryProvider),
   );
 }
@@ -86,6 +94,41 @@ class MemberProfileController extends _$MemberProfileController {
       },
       (member) {
         ref.invalidate(memberProfileProvider(memberId));
+        state = const AsyncData(null);
+        return member;
+      },
+    );
+  }
+}
+
+@riverpod
+class CreateMemberAccountController
+    extends _$CreateMemberAccountController {
+  @override
+  FutureOr<void> build() {}
+
+  Future<Member?> submit({
+    required String fullName,
+    required String email,
+    required String? phoneNumber,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+
+    final result = await ref.read(createMemberAccountProvider)(
+      fullName: fullName,
+      email: email,
+      phoneNumber: phoneNumber,
+      password: password,
+    );
+
+    return result.fold(
+          (failure) {
+        state = AsyncError(failure, StackTrace.current);
+        return null;
+      },
+          (member) {
+        ref.invalidate(membersProvider);
         state = const AsyncData(null);
         return member;
       },

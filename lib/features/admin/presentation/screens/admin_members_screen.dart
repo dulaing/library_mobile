@@ -13,9 +13,20 @@ class AdminMembersScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final membersResult = ref.watch(membersProvider);
 
+    final createState = ref.watch(
+      createMemberAccountControllerProvider,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Manage Members'),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: createState.isLoading
+            ? null
+            : () => _createMember(context, ref),
+        icon: const Icon(Icons.person_add),
+        label: const Text('Add member'),
       ),
       body: membersResult.when(
         loading: () {
@@ -116,6 +127,53 @@ class AdminMembersScreen extends ConsumerWidget {
     );
   }
 
+  Future<void> _createMember(
+      BuildContext context,
+      WidgetRef ref,
+      ) async {
+    final formData = await showDialog<CreateMemberFormData>(
+      context: context,
+      builder: (context) {
+        return const CreateMemberDialog();
+      },
+    );
+
+    if (formData == null || !context.mounted) {
+      return;
+    }
+
+    final member = await ref
+        .read(createMemberAccountControllerProvider.notifier)
+        .submit(
+      fullName: formData.fullName,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      password: formData.password,
+    );
+
+    if (!context.mounted) {
+      return;
+    }
+
+    if (member == null) {
+      final error = ref
+          .read(createMemberAccountControllerProvider)
+          .error;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_errorMessage(error))),
+      );
+
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Member account created.'),
+      ),
+    );
+  }
+
   Future<void> _editMember(
       BuildContext context,
       WidgetRef ref,
@@ -157,7 +215,11 @@ class AdminMembersScreen extends ConsumerWidget {
       return;
     }
 
-    ref.invalidate(membersProvider);
+    await ref.refresh(membersProvider.future);
+
+    if (!context.mounted) {
+      return;
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -354,4 +416,190 @@ class MemberFormData {
   final String email;
   final String? phoneNumber;
   final bool isActive;
+}
+
+class CreateMemberDialog extends StatefulWidget {
+  const CreateMemberDialog({super.key});
+
+  @override
+  State<CreateMemberDialog> createState() {
+    return _CreateMemberDialogState();
+  }
+}
+
+class _CreateMemberDialogState extends State<CreateMemberDialog> {
+  final formKey = GlobalKey<FormState>();
+
+  final fullNameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  bool hidePassword = true;
+
+  @override
+  void dispose() {
+    fullNameController.dispose();
+    emailController.dispose();
+    phoneController.dispose();
+    passwordController.dispose();
+    confirmPasswordController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Create member'),
+      content: SizedBox(
+        width: 420,
+        child: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: fullNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Full name',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Enter the member name.';
+                    }
+
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                  ),
+                  validator: (value) {
+                    if (value == null || !value.contains('@')) {
+                      return 'Enter a valid email.';
+                    }
+
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                    labelText: 'Phone number',
+                  ),
+                ),
+                TextFormField(
+                  controller: passwordController,
+                  obscureText: hidePassword,
+                  decoration: InputDecoration(
+                    labelText: 'Temporary password',
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          hidePassword = !hidePassword;
+                        });
+                      },
+                      icon: Icon(
+                        hidePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                    ),
+                  ),
+                    validator: (value) {
+                      if (value == null || value.length < 8) {
+                        return 'Use at least 8 characters.';
+                      }
+
+                      if (!RegExp(r'[A-Z]').hasMatch(value)) {
+                        return 'Add an uppercase letter.';
+                      }
+
+                      if (!RegExp(r'[a-z]').hasMatch(value)) {
+                        return 'Add a lowercase letter.';
+                      }
+
+                      if (!RegExp(r'[0-9]').hasMatch(value)) {
+                        return 'Add a number.';
+                      }
+
+                      if (!RegExp(r'[^a-zA-Z0-9]').hasMatch(value)) {
+                        return 'Add a special character.';
+                      }
+
+                      return null;
+                    }
+                ),
+                TextFormField(
+                  controller: confirmPasswordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm password',
+                  ),
+                  validator: (value) {
+                    if (value != passwordController.text) {
+                      return 'Passwords do not match.';
+                    }
+
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: _submit,
+          child: const Text('Create'),
+        ),
+      ],
+    );
+  }
+
+  void _submit() {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    final phone = phoneController.text.trim();
+
+    Navigator.pop(
+      context,
+      CreateMemberFormData(
+        fullName: fullNameController.text.trim(),
+        email: emailController.text.trim(),
+        phoneNumber: phone.isEmpty ? null : phone,
+        password: passwordController.text,
+      ),
+    );
+  }
+}
+
+class CreateMemberFormData {
+  const CreateMemberFormData({
+    required this.fullName,
+    required this.email,
+    required this.phoneNumber,
+    required this.password,
+  });
+
+  final String fullName;
+  final String email;
+  final String? phoneNumber;
+  final String password;
 }
