@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/error/failures.dart';
-import '../../../../core/router/app_route_names.dart';
 import '../providers/auth_providers.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -43,10 +40,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           email: emailController.text.trim(),
           password: passwordController.text,
         );
-  }
-
-  void openRegisterScreen() {
-    context.pushNamed(AppRouteNames.register);
   }
 
   @override
@@ -153,10 +146,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                   ],
-                  TextButton(
-                    onPressed: openRegisterScreen,
-                    child: const Text('Create an account'),
-                  ),
                 ],
               ),
             ),

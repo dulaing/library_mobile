@@ -1,6 +1,5 @@
 abstract final class AppRouteNames {
   static const login = 'login';
-  static const register = 'register';
   static const adminHome = 'admin-home';
   static const adminBooks = 'admin-books';
   static const adminBorrowings = 'admin-borrowings';

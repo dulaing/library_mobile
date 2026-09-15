@@ -8,7 +8,6 @@ import '../../features/admin/presentation/screens/admin_home_screen.dart';
 import '../../features/admin/presentation/screens/admin_members_screen.dart';
 import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
-import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/book/presentation/providers/book_providers.dart';
 import '../../features/book/presentation/screens/book_details_screen.dart';
 import '../../features/book/presentation/screens/books_screen.dart';
@@ -29,9 +28,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: '/login',
     redirect: (context, state) {
-      final isOnAuthScreen =
-          state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register';
+      final isOnAuthScreen = state.matchedLocation == '/login';
       final isOnAdminScreen = state.matchedLocation.startsWith('/admin');
 
       if (session == null) {
@@ -63,11 +60,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: '/login',
         name: AppRouteNames.login,
         builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/register',
-        name: AppRouteNames.register,
-        builder: (context, state) => const RegisterScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
